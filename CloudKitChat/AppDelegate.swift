@@ -13,12 +13,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             
     var window: UIWindow?
 
-
     func application(application: UIApplication!, didFinishLaunchingWithOptions launchOptions: NSDictionary!) -> Bool {
         // Override point for customization after application launch.
+        application.registerForRemoteNotifications()
+        application.registerUserNotificationSettings(UIUserNotificationSettings(forTypes: .Alert | .Badge | .Sound, categories: nil))
+        
+//        CloudKitManager.sharedManager.fetchUserWithNameDiscovered(true) {
+//            user, error in
+//            if error != nil {
+//                println("fetch user error \(error)")
+//                return
+//            }
+//            println("user \(user)")
+//            CloudKitManager.sharedManager.fetchChatGroupsForUser(user!) {
+//                groups, error in
+//                if error != nil {
+//                    println("fetch user error \(error)")
+//                    return
+//                }
+//                println("groups \(groups)")
+//                (groups![0] as ChatGroup).owner!.fetchWithCompletion {
+//                    error in
+//                    println("group 0 \(groups![0])")
+//                }
+//            }
+//        }
         return true
     }
 
+    func application(application: UIApplication!, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]!, fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)!) {
+        println("Notification received: \(userInfo)")
+    }
+    
+    func application(application: UIApplication!, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData!) {
+        println("Registered for push notification. Device token: \(deviceToken)")
+    }
+    
+    func application(application: UIApplication!, didFailToRegisterForRemoteNotificationsWithError error: NSError!) {
+        println("Push subscription failed: \(error)")
+    }
+    
     func applicationWillResignActive(application: UIApplication!) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
@@ -40,7 +74,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(application: UIApplication!) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
 
 }
 

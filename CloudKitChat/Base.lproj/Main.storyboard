@@ -1,25 +1,162 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6162" systemVersion="14A238h" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6205" systemVersion="14A314h" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="x8J-uM-dLR">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6160"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6198"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
-        <scene sceneID="ufC-wZ-h7g">
+        <!--Navigation Controller-->
+        <scene sceneID="LDR-bq-hBs">
             <objects>
-                <viewController id="vXZ-lx-hvc" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
-                        <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
+                <navigationController id="x8J-uM-dLR" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="arQ-Kr-vZD">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="lAd-C8-dmo" kind="relationship" relationship="rootViewController" id="2bh-LN-HwI"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3HV-uM-ujf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="-267" y="405"/>
+        </scene>
+        <!--Intro View Conroller-->
+        <scene sceneID="Nta-gN-0XB">
+            <objects>
+                <viewController title="Intro View Conroller" id="lAd-C8-dmo" customClass="IntroViewController" customModule="CloudKitChat" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="rbs-8j-xOr"/>
+                        <viewControllerLayoutGuide type="bottom" id="854-NT-EAt"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="JvT-pz-ecZ">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iCloudGradient" translatesAutoresizingMaskIntoConstraints="NO" id="PpF-aV-YZW">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="O2z-Gu-Rjr">
+                                <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CloudKitChatIcon" translatesAutoresizingMaskIntoConstraints="NO" id="LaR-gU-UFP">
+                                        <rect key="frame" x="201" y="30" width="197" height="150"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="150" id="aPY-YY-VUN"/>
+                                            <constraint firstAttribute="width" secondItem="LaR-gU-UFP" secondAttribute="height" multiplier="25:19" id="ycf-GK-1Lm"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CloudKit Chat" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.79999999999999993" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cm0-sw-Ggi">
+                                        <rect key="frame" x="30" y="195" width="540" height="65"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="65" id="C6R-GI-nw3"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-UltraLight" family="Helvetica Neue" pointSize="56"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <scrollView opaque="NO" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hNj-JG-T4L">
+                                        <rect key="frame" x="0.0" y="280" width="600" height="256"/>
+                                        <subviews>
+                                            <textField opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Type your name here" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="MDd-iI-9fE">
+                                                <rect key="frame" x="50" y="62" width="450" height="30"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits"/>
+                                                <connections>
+                                                    <outlet property="delegate" destination="lAd-C8-dmo" id="fSe-KA-1fV"/>
+                                                </connections>
+                                            </textField>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="What's your name? The name will appear as the sender when others receive your message." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" preferredMaxLayoutWidth="540" translatesAutoresizingMaskIntoConstraints="NO" id="fpt-x6-6JW">
+                                                <rect key="frame" x="30" y="0.0" width="540" height="42"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="42" id="neK-8S-Mlj"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="17"/>
+                                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="fpt-x6-6JW" firstAttribute="leading" secondItem="hNj-JG-T4L" secondAttribute="leading" constant="30" id="7J9-YT-tH4"/>
+                                            <constraint firstItem="MDd-iI-9fE" firstAttribute="centerX" secondItem="hNj-JG-T4L" secondAttribute="centerX" constant="-25" id="8jQ-yZ-tiJ"/>
+                                            <constraint firstAttribute="bottom" secondItem="MDd-iI-9fE" secondAttribute="bottom" constant="164" placeholder="YES" id="IvE-ss-ofX"/>
+                                            <constraint firstAttribute="centerX" secondItem="fpt-x6-6JW" secondAttribute="centerX" id="OyC-sR-xJk"/>
+                                            <constraint firstItem="MDd-iI-9fE" firstAttribute="leading" secondItem="hNj-JG-T4L" secondAttribute="leading" constant="50" id="P6q-NU-rwu"/>
+                                            <constraint firstAttribute="trailing" secondItem="fpt-x6-6JW" secondAttribute="trailing" constant="30" placeholder="YES" id="PFi-vH-sfj"/>
+                                            <constraint firstItem="MDd-iI-9fE" firstAttribute="top" secondItem="fpt-x6-6JW" secondAttribute="bottom" constant="20" id="ago-Ml-53K"/>
+                                            <constraint firstItem="fpt-x6-6JW" firstAttribute="top" secondItem="hNj-JG-T4L" secondAttribute="top" id="ePw-UJ-hbO"/>
+                                        </constraints>
+                                        <variation key="heightClass=regular-widthClass=compact" ambiguous="YES">
+                                            <rect key="frame" x="0.0" y="354" width="400" height="446"/>
+                                        </variation>
+                                        <connections>
+                                            <outlet property="delegate" destination="lAd-C8-dmo" id="NCj-qh-xHN"/>
+                                        </connections>
+                                    </scrollView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="Cm0-sw-Ggi" firstAttribute="leading" secondItem="O2z-Gu-Rjr" secondAttribute="leading" constant="30" id="2a2-27-e5p"/>
+                                    <constraint firstAttribute="bottom" secondItem="hNj-JG-T4L" secondAttribute="bottom" id="AdC-TV-feE"/>
+                                    <constraint firstAttribute="centerX" secondItem="LaR-gU-UFP" secondAttribute="centerX" id="EJK-WP-yUK"/>
+                                    <constraint firstItem="hNj-JG-T4L" firstAttribute="top" secondItem="Cm0-sw-Ggi" secondAttribute="bottom" constant="20" id="Hq4-YB-z96"/>
+                                    <constraint firstItem="Cm0-sw-Ggi" firstAttribute="top" secondItem="LaR-gU-UFP" secondAttribute="bottom" constant="15" id="P3G-Hu-jxk"/>
+                                    <constraint firstItem="hNj-JG-T4L" firstAttribute="leading" secondItem="O2z-Gu-Rjr" secondAttribute="leading" id="UG3-j1-Pdo"/>
+                                    <constraint firstItem="LaR-gU-UFP" firstAttribute="top" secondItem="O2z-Gu-Rjr" secondAttribute="top" constant="30" id="Y4P-Yy-xvE"/>
+                                    <constraint firstAttribute="centerX" secondItem="Cm0-sw-Ggi" secondAttribute="centerX" id="u3o-Bv-Gdk"/>
+                                    <constraint firstAttribute="trailing" secondItem="hNj-JG-T4L" secondAttribute="trailing" id="vRW-5i-8Bu"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="O2z-Gu-Rjr" firstAttribute="top" secondItem="rbs-8j-xOr" secondAttribute="bottom" id="3hZ-M1-NC3"/>
+                            <constraint firstAttribute="trailing" secondItem="PpF-aV-YZW" secondAttribute="trailing" id="Caj-EL-a10"/>
+                            <constraint firstItem="854-NT-EAt" firstAttribute="top" secondItem="O2z-Gu-Rjr" secondAttribute="bottom" id="IHN-GS-n67"/>
+                            <constraint firstAttribute="bottom" secondItem="PpF-aV-YZW" secondAttribute="bottom" id="IJV-To-G5b"/>
+                            <constraint firstAttribute="trailing" secondItem="O2z-Gu-Rjr" secondAttribute="trailing" id="RBM-Zk-wFj"/>
+                            <constraint firstItem="PpF-aV-YZW" firstAttribute="top" secondItem="JvT-pz-ecZ" secondAttribute="top" id="iM4-Gs-j92"/>
+                            <constraint firstItem="O2z-Gu-Rjr" firstAttribute="leading" secondItem="JvT-pz-ecZ" secondAttribute="leading" id="uiC-Ch-O0E"/>
+                            <constraint firstItem="PpF-aV-YZW" firstAttribute="leading" secondItem="JvT-pz-ecZ" secondAttribute="leading" id="yUj-Si-oX1"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="CloudKitChat" id="zyq-A1-hMa"/>
+                    <connections>
+                        <outlet property="askForNameLabel" destination="fpt-x6-6JW" id="KGW-yV-EnU"/>
+                        <outlet property="cloudImageView" destination="LaR-gU-UFP" id="gsB-Sw-ZtO"/>
+                        <outlet property="cloudKitChatTitleLabel" destination="Cm0-sw-Ggi" id="pC0-J0-Pv3"/>
+                        <outlet property="contentView" destination="O2z-Gu-Rjr" id="1od-4N-zNj"/>
+                        <outlet property="nameTextField" destination="MDd-iI-9fE" id="gvH-MA-JFf"/>
+                        <outlet property="scrollView" destination="hNj-JG-T4L" id="4II-pd-bjX"/>
+                        <segue destination="2by-gA-fmX" kind="show" identifier="ChatGroupViewControllerSegue" id="S85-ld-BgJ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mGn-9T-HNx" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="492" y="405"/>
+        </scene>
+        <!--Chat Group View Controller-->
+        <scene sceneID="rek-cG-zWn">
+            <objects>
+                <tableViewController id="2by-gA-fmX" userLabel="Chat Group View Controller" customClass="ChatGroupViewController" customModule="CloudKitChat" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="72" sectionHeaderHeight="22" sectionFooterHeight="22" id="hV5-RN-wjU">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <inset key="separatorInset" minX="80" minY="0.0" maxX="0.0" maxY="0.0"/>
+                        <connections>
+                            <outlet property="dataSource" destination="2by-gA-fmX" id="MZt-Kj-5aw"/>
+                            <outlet property="delegate" destination="2by-gA-fmX" id="JEf-IE-tml"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="CloudKitChat" id="P2f-U1-Wlg"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="E8b-iX-bmY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1224" y="405"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="CloudKitChatIcon" width="267" height="213"/>
+        <image name="iCloudGradient" width="1" height="1136"/>
+    </resources>
 </document>
