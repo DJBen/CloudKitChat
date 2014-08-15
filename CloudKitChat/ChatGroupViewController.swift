@@ -28,12 +28,73 @@ class ChatGroupViewController: UITableViewController {
         navigationItem.leftBarButtonItem = editButtonItem() // TODO: KVO
         tableView.registerClass(ChatCell.self, forCellReuseIdentifier: NSStringFromClass(ChatCell))
         
-//        refreshChatGroups()
+        let debugOptionsGR = UITapGestureRecognizer(target: self, action: "showDebugOptions:")
+        debugOptionsGR.numberOfTapsRequired = 2
+        debugOptionsGR.numberOfTouchesRequired = 2
+        self.tableView.addGestureRecognizer(debugOptionsGR)
+        
+        refreshChatGroupsWithCompletion {
+            error in
+            if error == nil {
+                self.registerForMessageNotification()
+            }
+        }
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        self.tableView.reloadData()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func showDebugOptions(sender: UIGestureRecognizer!) {
+        let alertController = UIAlertController(title: "Debug Options", message: nil, preferredStyle: .ActionSheet)
+        let successNotifier = UIAlertController(title: "Debug Action Placeholder", message: "Placeholder", preferredStyle: .Alert)
+        successNotifier.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
+        alertController.addAction(UIAlertAction(title: "Reset Subscriptions", style: .Default) {
+            _ in
+            CloudKitManager.sharedManager.deleteAllSubscriptionsWithCompletion {
+                error in
+                if error != nil {
+                    successNotifier.title = "Unable to delete subscriptions"
+                    successNotifier.message = error!.localizedRecoverySuggestion
+                    self.presentViewController(successNotifier, animated: true, completion: nil)
+                    return
+                }
+                CurrentUser!.subscribeToChatGroupAndMessageChangesWithCompletion {
+                    error in
+                    if error != nil {
+                        successNotifier.title = "Unable to subscribe"
+                        successNotifier.message = error!.localizedRecoverySuggestion
+                        self.presentViewController(successNotifier, animated: true, completion: nil)
+                        return
+                    }
+                    successNotifier.title = "Subscription Reset"
+                    successNotifier.message = "You have reset the subscriptions successfully."
+                    self.presentViewController(successNotifier, animated: true, completion: nil)
+                }
+            }
+        })
+        alertController.addAction(UIAlertAction(title: "Clear Subscriptions", style: .Default) {
+            alertAction in
+            CloudKitManager.sharedManager.deleteAllSubscriptionsWithCompletion {
+                error in
+                if error != nil {
+                    successNotifier.title = "Unable to delete subscription"
+                    successNotifier.message = error!.localizedRecoverySuggestion
+                    self.presentViewController(successNotifier, animated: true, completion: nil)
+                    return
+                }
+                successNotifier.title = "Subscription Cleared"
+                successNotifier.message = "You have cleared all subscriptions successfully."
+                self.presentViewController(successNotifier, animated: true, completion: nil)
+            }
+        })
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
+        self.presentViewController(alertController, animated: true, completion: nil)
     }
 
     // MARK: - Table view data source
@@ -46,7 +107,6 @@ class ChatGroupViewController: UITableViewController {
         return groupCount
     }
 
-    
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(ChatCell), forIndexPath: indexPath) as ChatCell
         if let chat = chats?[indexPath.row] {
@@ -108,20 +168,30 @@ class ChatGroupViewController: UITableViewController {
     }
     */
 
-    
-    private func refreshChatGroups() {
-        if let currentUser = CloudKitManager.sharedManager.currentUser {
-            currentUser.fetchChatGroupsWithCompletion {
+    private func refreshChatGroupsWithCompletion(completion: ((error: NSError?) -> Void)?) {
+        if let currentUser = CurrentUser {
+            currentUser.fetchChatGroupsWithFullDetails(true) {
                 groups, error in
                 if error != nil {
                     println("\(error)")
+                    completion?(error: error)
                     return
                 }
+                completion?(error: nil)
                 self.tableView.reloadData()
-                println("chatgroups: \(currentUser.chatGroups)")
             }
-        } else {
-            // TODO: Error handling
+        }
+    }
+    
+    private func registerForMessageNotification() {
+        CurrentUser!.subscribeToChatGroupAndMessageChangesWithCompletion {
+            error in
+            if error != nil {
+                println("Error subscribing \(error)")
+                if !ErrorUtil.isDuplicateSubscription(error!) {
+                    return
+                }
+            }
         }
     }
 }

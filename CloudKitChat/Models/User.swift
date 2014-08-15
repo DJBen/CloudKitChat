@@ -67,16 +67,21 @@ public class User: CloudKitQueriable {
         CloudKitManager.sharedManager.fetchChatGroupsForUser(self, completion: completion)
     }
     
+    public func fetchChatGroupsWithFullDetails(includeDetails: Bool, completion: (chatGroups: [ChatGroup]?, error: NSError?) -> Void) {
+        CloudKitManager.sharedManager.fetchChatGroupsForUser(self, includeChatGroupDetails: includeDetails, completion: completion)
+    }
+    
     public func createChatGroupWithName(name: String, otherUsers: [User], completion: (group: ChatGroup?, error: NSError?) -> Void) {
         return CloudKitManager.sharedManager.createChatGroupCreatedBy(self, name: name, otherUsers: otherUsers, completion: completion)
     }
     
-    public func sendMessageWithBody(body: String, toGroup recipientGroup: ChatGroup, completion: (message: Message?, error: NSError?) -> Void) {
-        sendMessageWithBody(body, toGroup: recipientGroup, sentTime: NSDate(), completion: completion)
+    /// Send a message to target group. The `constructedMessage` calls back immediately after it constructs a new message ready for uploading. On completion the `completion` block either has non-nil `message` or `error` depending on whether it is successfully done, respectively. The message will automatically append to target group after sending.
+    public func sendMessageWithBody(body: String, toGroup recipientGroup: ChatGroup, constructedMessage: ((message: Message) -> Void)?, completion: (message: Message?, error: NSError?) -> Void) {
+        CloudKitManager.sharedManager.sendMessageWithBody(body, toGroup: recipientGroup, fromSender: self, timeSent: NSDate(), constructedMessage: constructedMessage, completion: completion)
     }
     
-    public func sendMessageWithBody(body: String, toGroup recipientGroup: ChatGroup, sentTime: NSDate, completion: (message: Message?, error: NSError?) -> Void) {
-        CloudKitManager.sharedManager.sendMessageWithBody(body, toGroup: recipientGroup, fromSender: self, timeSent: sentTime, completion: completion)
+    public func sendMessageWithBody(body: String, toGroup recipientGroup: ChatGroup, completion: (message: Message?, error: NSError?) -> Void) {
+        sendMessageWithBody(body, toGroup: recipientGroup, constructedMessage: nil, completion: completion)
     }
     
     public func subscribeToChatGroupAndMessageChangesWithCompletion(completion: (error: NSError?) -> Void) {

@@ -16,23 +16,23 @@ let ChatGroupMessagesKey = "messages"
 let ChatGroupOwnerKey = "owner"
 
 // TODO: Greet Realm
-public class ChatGroup: CloudKitQueriable, Hashable {
+public class ChatGroup: CloudKitQueriable {
     public var name: String?
     public var owner: User?
     public var people: [User]?
     public var messages: [Message]?
     public var lastMessage: Message? {
         get {
-            if messages != nil || messages!.count == 0 {
+            if messages == nil || messages!.count == 0 {
                 return nil
             }
-            return messages![messages!.count - 1]
-        }
-    }
-    
-    public var hashValue: Int {
-        get {
-            return self.recordID.hash
+            var lastMessageSoFar: Message?
+            for message in messages! {
+                if lastMessageSoFar == nil || message > lastMessageSoFar! {
+                    lastMessageSoFar = message
+                }
+            }
+            return lastMessageSoFar
         }
     }
     

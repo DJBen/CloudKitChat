@@ -14,9 +14,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var textView: UITextView!
     var sendButton: UIButton!
     var rotating = false
-    
-    var drafts: [ChatGroup: String] = [:]
-    var messagesOrderedByDay: [[Message]] = [[Message]]()
+    private var messagesOrderedByTimePeriod = [[Message]]()
 
     override var inputAccessoryView: UIView! {
     get {
@@ -30,7 +28,6 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
             textView.layer.borderColor = UIColor(red: 200/255, green: 200/255, blue: 205/255, alpha:1).CGColor
             textView.layer.borderWidth = 0.5
             textView.layer.cornerRadius = 5
-//        textView.placeholder = "Message"
             textView.scrollsToTop = false
             textView.textContainerInset = UIEdgeInsetsMake(4, 3, 3, 3)
             toolBar.addSubview(textView)
@@ -66,7 +63,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     required init(coder aDecoder: NSCoder!) {
-        // WARNING: That is a dummy
+        // This initilaizer should never be called
         self.chatGroup = ChatGroup(recordID: CKRecordID(recordName: ChatGroupRecordType))
         super.init(coder: aDecoder)
     }
@@ -77,18 +74,6 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-//        messagesOrderedByDay = [
-//            [
-//                Message(incoming: true, text: "I really enjoyed programming with you! :-)", sentDate: NSDate(timeIntervalSinceNow: -60*60*24*2-60*60)),
-//                Message(incoming: false, text: "Thanks! Me too! :-)", sentDate: NSDate(timeIntervalSinceNow: -60*60*24*2))
-//            ],
-//            [
-//                Message(incoming: true, text: "Hey, would you like to spend some time together tonight and work on Acani?", sentDate: NSDate(timeIntervalSinceNow: -33)),
-//                Message(incoming: false, text: "Sure, I'd love to. How's 6 PM?", sentDate: NSDate(timeIntervalSinceNow: -19)),
-//                Message(incoming: true, text: "6 sounds good :-)", sentDate: NSDate.date())
-//            ]
-//        ]
 
         let whiteColor = UIColor.whiteColor()
         view.backgroundColor = whiteColor // fixes push animation
@@ -111,7 +96,8 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
         notificationCenter.addObserver(self, selector: "keyboardDidShow:", name: UIKeyboardDidShowNotification, object: nil)
         notificationCenter.addObserver(self, selector: "menuControllerWillHide:", name: UIMenuControllerWillHideMenuNotification, object: nil) // #CopyMessage
 
-        // tableViewScrollToBottomAnimated(false) // doesn't work
+        generateTableViewDisplay()
+        tableViewScrollToBottomAnimated(false) // doesn't work
     }
 
     deinit {
@@ -125,16 +111,16 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     override func viewWillDisappear(animated: Bool)  {
         super.viewWillDisappear(animated)
-        drafts[chatGroup] = textView.text
+        Outboxes[chatGroup].draft = textView.text
     }
 
     // This gets called a lot. Perhaps there's a better way to know when `view.window` has been set?
     override func viewDidLayoutSubviews()  {
         super.viewDidLayoutSubviews()
 
-        if drafts[chatGroup] != nil && !drafts[chatGroup]!.isEmpty {
-            textView.text = drafts[chatGroup]!
-            drafts[chatGroup] = ""
+        if !Outboxes[chatGroup].draft.isEmpty {
+            textView.text = Outboxes[chatGroup].draft
+            Outboxes[chatGroup].draft = ""
             textViewDidChange(textView)
             textView.becomeFirstResponder()
         }
@@ -158,17 +144,17 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
 //    }
 
     func numberOfSectionsInTableView(tableView : UITableView!) -> Int {
-        return messagesOrderedByDay.count
+        return messagesOrderedByTimePeriod.count
     }
 
     func tableView(tableView: UITableView!, numberOfRowsInSection section: Int) -> Int {
-        return messagesOrderedByDay[section].count + 1 // for sent-date cell
+        return messagesOrderedByTimePeriod[section].count + 1 // for sent-date cell
     }
 
     func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(MessageSentDateCell), forIndexPath: indexPath) as MessageSentDateCell
-            let message = messagesOrderedByDay[indexPath.section][0]
+            let message = messagesOrderedByTimePeriod[indexPath.section][0]
             let dateFormatter = NSDateFormatter()
             dateFormatter.dateStyle = .ShortStyle
             dateFormatter.timeStyle = .ShortStyle
@@ -187,7 +173,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 cell.bubbleImageView.addGestureRecognizer(doubleTapGestureRecognizer)
                 cell.bubbleImageView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: action))
             }
-            let message = messagesOrderedByDay[indexPath.section][indexPath.row-1]
+            let message = messagesOrderedByTimePeriod[indexPath.section][indexPath.row-1]
             cell.configureWithMessage(message)
             return cell
         }
@@ -198,7 +184,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
         if indexPath.row == 0 {
             return 31
         } else {
-            let message = messagesOrderedByDay[indexPath.section][indexPath.row-1]
+            let message = messagesOrderedByTimePeriod[indexPath.section][indexPath.row-1]
             let height = (message.body! as NSString).boundingRectWithSize(CGSize(width: 218, height: CGFloat.max), options: .UsesLineFragmentOrigin, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(messageFontSize)], context: nil).height
             #if arch(x86_64) || arch(arm64)
                 return ceil(height) + 24
@@ -261,9 +247,16 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
         if (self.tableView.tracking || self.tableView.decelerating) {
             tableView.contentOffset.y = contentOffsetY
         }
+        
+        // This method will be called again when dismissal is nearly complete
+        // In that situation the animation duration is 0 and the begin and end frame are the same
+        // At view loading, it will be called manually, so I need to eliminate that too
+        if (notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] as NSNumber).doubleValue != 0 && !CGRectEqualToRect((notification.userInfo[UIKeyboardFrameBeginUserInfoKey] as NSValue).CGRectValue(), (notification.userInfo[UIKeyboardFrameEndUserInfoKey] as NSValue).CGRectValue()) {
+            tableViewScrollToBottomAnimated(true)
+        }
     }
 
-    func updateTextViewHeight() {
+    private func updateTextViewHeight() {
         let oldHeight = textView.frame.height
         let maxHeight = UIInterfaceOrientationIsPortrait(interfaceOrientation) ? textViewMaxHeight.portrait : textViewMaxHeight.landscape
         var newHeight = min(textView.sizeThatFits(CGSize(width: textView.frame.width, height: CGFloat.max)).height, maxHeight)
@@ -281,30 +274,114 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
         // Autocomplete text before sending #hack
         textView.resignFirstResponder()
         textView.becomeFirstResponder()
-
-        fatalError("Not implemented send action")
-//        messagesOrderedByDay.append([Message(incoming: false, text: textView.text, sentDate: NSDate.date())])
+        CurrentUser!.sendMessageWithBody(textView.text, toGroup: chatGroup, constructedMessage: {
+            pendingMessage in
+            Outboxes[self.chatGroup].addMessage(pendingMessage)
+            self.updateTableViewPendingMessage(pendingMessage)
+        }, completion: {
+            message, error in
+            if error != nil {
+                println("error sending message \"\(self.textView.text)\": \(error)")
+                return
+            }
+            let result = Outboxes[self.chatGroup].deleteMessage(message!)
+        })
+        
         textView.text = nil
         updateTextViewHeight()
         sendButton.enabled = false
 
-        let lastSection = tableView.numberOfSections()
-        tableView.beginUpdates()
-        tableView.insertSections(NSIndexSet(index: lastSection), withRowAnimation: .Automatic)
-        tableView.insertRowsAtIndexPaths([
-            NSIndexPath(forRow: 0, inSection: lastSection),
-            NSIndexPath(forRow: 1, inSection: lastSection)
-            ], withRowAnimation: .Automatic)
-        tableView.endUpdates()
         tableViewScrollToBottomAnimated(true)
         AudioServicesPlaySystemSound(messageSoundOutgoing)
     }
 
-    func tableViewScrollToBottomAnimated(animated: Bool) {
-        let numberOfRows = tableView.numberOfRowsInSection(0)
-        if numberOfRows > 0 {
-            tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: numberOfRows-1, inSection: 0), atScrollPosition: .Bottom, animated: animated)
+    private func updateTableViewPendingMessage(pendingMessage: Message) {
+        generateTableViewDisplay()
+        
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "yyyy/MM/dd"
+        let messageDateString = dateFormatter.stringFromDate(pendingMessage.timeSent!)
+        let messageDate = dateFormatter.dateFromString(messageDateString)
+        
+        var messagesDict = [NSDate: [Message]]()
+        for message in chatGroup.messages! + Outboxes[chatGroup].pendingMessages {
+            if !message.fetched() || message == pendingMessage {
+                continue
+            }
+            let dateFormatter = NSDateFormatter()
+            dateFormatter.dateFormat = "yyyy/MM/dd"
+            let dateString = dateFormatter.stringFromDate(message.timeSent!)
+            let date = dateFormatter.dateFromString(dateString)
+            if var messagesAtSameDay = messagesDict[date] {
+                messagesAtSameDay.append(message)
+                messagesDict[date] = messagesAtSameDay
+            } else {
+                messagesDict[date] = [message]
+            }
         }
+        
+        tableView.beginUpdates()
+        if var messagesAtSameDay = messagesDict[messageDate] {
+            messagesAtSameDay.append(pendingMessage)
+            messagesAtSameDay.sort { $0 < $1 }
+            let row = find(messagesAtSameDay, pendingMessage)!
+            let sortedAllMessageDates = messagesDict.keys.array.sorted { $0.compare($1) as NSComparisonResult == .OrderedAscending }
+            var section: Int!
+            var index: Int = 0
+            for otherMessageDate in sortedAllMessageDates {
+                if messageDate.compare(otherMessageDate) == .OrderedSame {
+                    section = index
+                    break
+                }
+                index++
+            }
+            tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: row, inSection: section)], withRowAnimation: .Automatic)
+        } else {
+            var allMessageDates = messagesDict.keys.array
+            allMessageDates.append(messageDate)
+            allMessageDates.sort { $0.compare($1) == .OrderedAscending }
+            let section = find(allMessageDates, messageDate)!
+            tableView.insertSections(NSIndexSet(index: section), withRowAnimation: .Automatic)
+            tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: section)], withRowAnimation: .Automatic)
+        }
+        tableView.endUpdates()
+    }
+
+    private func tableViewScrollToBottomAnimated(animated: Bool) {
+        let numberOfRows = tableView.numberOfRowsInSection(tableView.numberOfSections() - 1)
+        if numberOfRows > 0 {
+            tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: numberOfRows - 1, inSection: tableView.numberOfSections() - 1), atScrollPosition: .Bottom, animated: animated)
+        }
+    }
+    
+    /// Call this method to generate messages ordered by day to feed the table view
+    private func generateTableViewDisplay() {
+        if !chatGroup.fetched() {
+            messagesOrderedByTimePeriod = [[Message]]()
+        }
+        var messagesDict = [NSDate: [Message]]()
+        for message in chatGroup.messages! + Outboxes[chatGroup].pendingMessages {
+            if !message.fetched() {
+                println("Warning: message \(message) not fetched")
+                continue
+            }
+            let dateFormatter = NSDateFormatter()
+            dateFormatter.dateFormat = "yyyy/MM/dd"
+            let dateString = dateFormatter.stringFromDate(message.timeSent!)
+            let date = dateFormatter.dateFromString(dateString)
+            if var messagesAtSameDay = messagesDict[date] {
+                messagesAtSameDay.append(message)
+                messagesDict[date] = messagesAtSameDay
+            } else {
+                messagesDict[date] = [message]
+            }
+        }
+        let dates = messagesDict.keys.array.sorted { $0.compare($1) as NSComparisonResult == .OrderedAscending }
+        var orderedMessages = [[Message]]()
+        for distinctDate in dates {
+            orderedMessages.append(messagesDict[distinctDate]!)
+        }
+        messagesOrderedByTimePeriod = orderedMessages
     }
 
     // Handle actions #CopyMessage
@@ -327,7 +404,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
     // 2. Copy text to pasteboard
     func messageCopyTextAction(menuController: UIMenuController) {
         let selectedIndexPath = tableView.indexPathForSelectedRow()
-        let selectedMessage = messagesOrderedByDay[selectedIndexPath.section][selectedIndexPath.row-1]
+        let selectedMessage = messagesOrderedByTimePeriod[selectedIndexPath.section][selectedIndexPath.row-1]
         UIPasteboard.generalPasteboard().string = selectedMessage.body
     }
     // 3. Deselect row

@@ -17,27 +17,38 @@ let CloudKitCustomTestContainer = "iCloud.edu.jhu.Test.CloudKitChat"
 public typealias FetchUserCompletionBlock = (user: User?, error: NSError?) -> Void
 public typealias FetchChatGroupsCompletionBlock = (chatGroups: [ChatGroup]?, error: NSError?) -> Void
 
+public enum FetchModelOption {
+    case FetchNonRelationalProperties
+    case FetchFullProperties
+}
+
+var CurrentUser: User? {
+    get {
+        return CloudKitManager.sharedManager.currentUser
+    }
+}
 
 // TODO: Cache using Realm
 public class CloudKitManager: NSObject {
     var container: CKContainer
     var database: CKDatabase
-    
+
     class var sharedManager: CloudKitManager {
-    struct Singleton {
-        static let instance = CloudKitManager()
+        struct Singleton {
+            static let instance = CloudKitManager()
         }
         return Singleton.instance
     }
     
     private(set) var currentUser: User?
+    private(set) var lastServerChangeToken: CKServerChangeToken?
     
     override init() {
         container = CKContainer(identifier: CloudKitCustomTestContainer)
         database = container.publicCloudDatabase
     }
     
-    internal func requestDiscoveryPermission(completion: (dicoverable: Bool, error: NSError?) -> Void) {
+    func requestDiscoveryPermission(completion: (dicoverable: Bool, error: NSError?) -> Void) {
         self.container.requestApplicationPermission(.PermissionUserDiscoverability) {
             (applicationPermissionStatus: CKApplicationPermissionStatus, error: NSError!) in
             dispatch_async(dispatch_get_main_queue()) {
@@ -51,7 +62,7 @@ public class CloudKitManager: NSObject {
      * @param completion The completion handler
      * @discussion The user array it returns in the completion handler is not fetched, meaning there are only user IDs associated with them.
      */
-    public func discoverUsersFromContactWithCompletion(completion: (users: [User]?, error: NSError?) -> Void) {
+    func discoverUsersFromContactWithCompletion(completion: (users: [User]?, error: NSError?) -> Void) {
         self.requestDiscoveryPermission {
             discoverable, error in
             if error != nil {
@@ -82,7 +93,7 @@ public class CloudKitManager: NSObject {
         }
     }
     
-    public func discoverUsersFromEmail(email: String, completion: (user: User?, error: NSError?) -> Void) {
+    func discoverUsersFromEmail(email: String, completion: (user: User?, error: NSError?) -> Void) {
         self.requestDiscoveryPermission {
             discoverable, error in
             if error != nil {
@@ -111,7 +122,7 @@ public class CloudKitManager: NSObject {
     * @param completion The completion handler
     * @discussion This will fetch the current user and initialize an `User` instance with fetched properties. It will attempt to use discovery to get user's real name too. If that fails, it generates an `User_<ID>` string as the user name instead.
     */
-    public func fetchUserWithNameDiscovered(discoverName: Bool, completion: FetchUserCompletionBlock) {
+    func fetchUserWithNameDiscovered(discoverName: Bool, completion: FetchUserCompletionBlock) {
         self.container.fetchUserRecordIDWithCompletionHandler {
             (userRecordID: CKRecordID!, error: NSError!) in
             if error {
@@ -174,7 +185,7 @@ public class CloudKitManager: NSObject {
     * @param model The `CloudKitQueriable` model to fetch all properties in.
     * @param completion The completion handler. The fetched model is returned here.
     */
-    public func fetchedModelWithAllPropertiesFromModel(model: CloudKitQueriable, completion: (fetchedModel: CloudKitQueriable?, error: NSError?) -> Void) {
+    func fetchedModelWithAllPropertiesFromModel(model: CloudKitQueriable, completion: (fetchedModel: CloudKitQueriable?, error: NSError?) -> Void) {
         self.database.fetchRecordWithID(model.recordID) {
             fetchedRecord, error in
             if error {
@@ -193,7 +204,7 @@ public class CloudKitManager: NSObject {
                 fetchedModel = User(record: fetchedRecord)
             default:
                 dispatch_async(dispatch_get_main_queue()) {
-                    completion(fetchedModel: nil, error: CloudKitChatError.UnknownRecordTypeError(fetchedRecord.recordType).error())
+                    completion(fetchedModel: nil, error: CloudKitChatError.UnknownRecordTypeError(fetchedRecord.recordType).error)
                 }
                 return
             }
@@ -203,7 +214,7 @@ public class CloudKitManager: NSObject {
         }
     }
     
-    public func fetchAllPropertiesInModel(model: CloudKitQueriable, completion: (error: NSError?) -> Void) {
+    func fetchAllPropertiesInModel(model: CloudKitQueriable, fetchOption: FetchModelOption, completion: (error: NSError?) -> Void) {
         fetchedModelWithAllPropertiesFromModel(model) {
             fetchedModel, error in
             if error != nil {
@@ -230,7 +241,7 @@ public class CloudKitManager: NSObject {
                 chatGroupModel.owner = chatGroup.owner
             } else {
                 dispatch_async(dispatch_get_main_queue()) {
-                    completion(error: CloudKitChatError.UnknownModelTypeError.error())
+                    completion(error: CloudKitChatError.UnknownModelTypeError.error)
                 }
                 return
             }
@@ -244,10 +255,10 @@ public class CloudKitManager: NSObject {
     * Fetch a model collection.
     * @param list The model collection
     * @param completion The completion handler
-    * @discussion Regardless of whether the list of property is fetched, this method will refetch them again. It will not assign the fetched model collection to the source.
+    * @discussion This method will refetch the list of models regardless if they have already been fetched or not. It will NOT assign the fetched model collection to the source, so you may need to do it manually.
     */
     // BUG: Using generics causes Swift to crash
-    public func fetchModelCollection(list: [CloudKitQueriable], completion: (fetchedList: [CloudKitQueriable]?, error: NSError?) -> Void) {
+    func fetchModelCollection(list: [CloudKitQueriable], completion: (fetchedList: [CloudKitQueriable]?, error: NSError?) -> Void) {
         let recordIDs = list.map {
             model -> CKRecordID in
             return model.recordID
@@ -265,7 +276,7 @@ public class CloudKitManager: NSObject {
             case ChatGroupRecordType:
                 fetchedList.append(ChatGroup(record: record))
             default:
-                fetchError = CloudKitChatError.UnknownRecordTypeError(record.recordType).error()
+                fetchError = CloudKitChatError.UnknownRecordTypeError(record.recordType).error
             }
         }
         fetchListOperation.fetchRecordsCompletionBlock = {
@@ -287,7 +298,7 @@ public class CloudKitManager: NSObject {
     }
     
     // MARK: Chat Functionalities
-    public func createChatGroupCreatedBy(owner: User, name: String, otherUsers: [User], completion: (group: ChatGroup?, error: NSError?) -> Void) {
+    func createChatGroupCreatedBy(owner: User, name: String, otherUsers: [User], completion: (group: ChatGroup?, error: NSError?) -> Void) {
         let groupRecord = CKRecord(recordType: ChatGroupRecordType)
         groupRecord.setObject(name, forKey: ChatGroupNameKey)
         var userReferences = otherUsers.map {
@@ -367,14 +378,14 @@ public class CloudKitManager: NSObject {
         self.database.addOperation(fetchUsersOperation)
     }
     
-    public func fetchChatGroupsForUser(user: User, completion: FetchChatGroupsCompletionBlock) {
+    func fetchChatGroupsForUser(user: User, completion: FetchChatGroupsCompletionBlock) {
         fetchChatGroupsForUser(user, includeChatGroupDetails: false, completion: completion)
     }
     
-    public func fetchChatGroupsForUser(user: User, includeChatGroupDetails: Bool, completion: FetchChatGroupsCompletionBlock) {
+    func fetchChatGroupsForUser(user: User, includeChatGroupDetails: Bool, completion: FetchChatGroupsCompletionBlock) {
         if !user.fetched() {
             dispatch_async(dispatch_get_main_queue()) {
-                completion(chatGroups: nil, error: CloudKitChatError.ModelNotFetchedError(user).error())
+                completion(chatGroups: nil, error: CloudKitChatError.ModelNotFetchedError(user).error)
             }
             return
         }
@@ -388,23 +399,72 @@ public class CloudKitManager: NSObject {
             }
             dispatch_async(dispatch_get_main_queue()) {
                 user.chatGroups = (fetchedGroups as [ChatGroup])
-                completion(chatGroups: (fetchedGroups as [ChatGroup]), error: nil)
+                if !includeChatGroupDetails {
+                    self.currentUser!.chatGroups = (fetchedGroups as [ChatGroup])
+                    completion(chatGroups: (fetchedGroups as [ChatGroup]), error: nil)
+                } else {
+                    var fetchedError: NSError? = nil
+                    let group = dispatch_group_create()
+                    for fetchedGroup in (fetchedGroups as [ChatGroup]) {
+                        dispatch_group_enter(group)
+                        let subgroup = dispatch_group_create()
+                        dispatch_group_enter(subgroup)
+                        self.fetchModelCollection(fetchedGroup.messages!) {
+                            fetchedMessages, error in
+                            if error != nil {
+                                fetchedError = error
+                            }
+                            fetchedGroup.messages = (fetchedMessages as [Message])
+                            dispatch_group_leave(subgroup)
+                        }
+                        dispatch_group_enter(subgroup)
+                        fetchedGroup.owner!.fetchWithCompletion {
+                            error in
+                            if error != nil {
+                                fetchedError = error
+                            }
+                            dispatch_group_leave(subgroup)
+                        }
+                        dispatch_group_enter(subgroup)
+                        self.fetchModelCollection(fetchedGroup.people!) {
+                            fetchedPeople, error in
+                            if error != nil {
+                                fetchedError = error
+                            }
+                            fetchedGroup.people = (fetchedPeople as [User])
+                            dispatch_group_leave(subgroup)
+                        }
+                        dispatch_group_notify(subgroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                            dispatch_group_leave(group)
+                        }
+                    }
+                    dispatch_group_notify(group, dispatch_get_main_queue()) {
+                        if fetchedError != nil {
+                            completion(chatGroups: nil, error: fetchedError)
+                        } else {
+                            self.currentUser!.chatGroups = (fetchedGroups as [ChatGroup])
+                            completion(chatGroups: (fetchedGroups as [ChatGroup]), error: nil)
+                        }
+                    }
+                }
             }
         }
     }
     
-    public func sendMessageWithBody(body: String, toGroup recipientGroup: ChatGroup, fromSender sender: User, timeSent: NSDate,  completion: (message: Message?, error: NSError?) -> Void) {
+    func sendMessageWithBody(body: String, toGroup recipientGroup: ChatGroup, fromSender sender: User, timeSent: NSDate,  completion: (message: Message?, error: NSError?) -> Void) {
         self.sendMessageWithBody(body, toGroup: recipientGroup, fromSender: sender, timeSent: timeSent, constructedMessage: nil, completion: completion)
     }
     
-    public func sendMessageWithBody(body: String, toGroup recipientGroup: ChatGroup, fromSender sender: User, timeSent: NSDate, constructedMessage: ((message: Message) -> Void)?, completion: (message: Message?, error: NSError?) -> Void) {
+    func sendMessageWithBody(body: String, toGroup recipientGroup: ChatGroup, fromSender sender: User, timeSent: NSDate, constructedMessage: ((message: Message) -> Void)?, completion: (message: Message?, error: NSError?) -> Void) {
         let messageRecord = CKRecord(recordType: MessageRecordType)
         messageRecord.setObject(body, forKey: MessageBodyKey)
         messageRecord.setObject(CKReference(recordID: sender.recordID, action: .DeleteSelf), forKey: MessageSenderKey)
         messageRecord.setObject(CKReference(recordID: recipientGroup.recordID, action: .DeleteSelf), forKey: MessageRecipientGroupKey)
         messageRecord.setObject(timeSent, forKey: MessageTimeSentKey)
         var message = Message(record: messageRecord)
-        constructedMessage?(message: message)
+        if constructedMessage != nil {
+            constructedMessage!(message: message)
+        }
         
         let messageRecordReference = CKReference(recordID: messageRecord.recordID, action: .None)
         self.database.fetchRecordWithID(recipientGroup.recordID) {
@@ -416,11 +476,11 @@ public class CloudKitManager: NSObject {
                 return
             }
             let fetchedRecipientGroup = ChatGroup(record: recipientGroupRecord)
-            if find(fetchedRecipientGroup.people!, sender) != nil {
+            if find(fetchedRecipientGroup.people!, sender) == nil {
                 // User is not in the group he/she send message to
                 // Abort mission! I repeat, abort mission!
                 dispatch_async(dispatch_get_main_queue()) {
-                    completion(message: nil, error: CloudKitChatError.WrongRecipentGroupError(sender, recipientGroup).error())
+                    completion(message: nil, error: CloudKitChatError.WrongRecipentGroupError(sender, recipientGroup).error)
                 }
                 return
             }
@@ -463,7 +523,7 @@ public class CloudKitManager: NSObject {
     * @discussion This method will fetch chat group properties automatically if they have not already been fetched. The `messages` property in parameter `group` will also be updated upon completion.
     */
     // TODO: Limit need another -fetchedMessagesCount property
-    public func fetchMessagesInChatGroup(group: ChatGroup, messageLimit: Int?, completion: (messages: [Message]?, error: NSError?) -> Void) {
+    func fetchMessagesInChatGroup(group: ChatGroup, messageLimit: Int?, completion: (messages: [Message]?, error: NSError?) -> Void) {
         if !group.fetched() {
             group.fetchWithCompletion {
                 error in
@@ -522,7 +582,7 @@ public class CloudKitManager: NSObject {
     internal func subscribeToChatGroupAndMessageChangesWithUser(user: User, completion: (error: NSError?) -> Void) {
         if !user.fetched() {
             dispatch_async(dispatch_get_main_queue()) {
-                completion(error: CloudKitChatError.ModelNotFetchedError(user).error())
+                completion(error: CloudKitChatError.ModelNotFetchedError(user).error)
             }
             return
         }
@@ -530,13 +590,17 @@ public class CloudKitManager: NSObject {
         // Register for every chat group the user is involved for notification
         let messageSubscriptions = user.chatGroups!.map {
             chatGroup -> CKSubscription in
-            let groupReference = CKReference(recordID: chatGroup.recordID, action: .None)
+            let groupReference = CKReference(recordID: chatGroup.recordID, action: .DeleteSelf)
             let predicate = NSPredicate(format: "recipientGroup == %@", groupReference)
             let subscription = CKSubscription(recordType: MessageRecordType, predicate: predicate, options: .FiresOnRecordCreation)
             let notificationInfo = CKNotificationInfo()
             notificationInfo.shouldBadge = false
             notificationInfo.shouldSendContentAvailable = true
-            notificationInfo.alertBody = "You have a new message from Chat Group" /* chatGroup.name! NOT FETCHED YET */
+            if let groupName = chatGroup.name {
+                notificationInfo.alertBody = "You have a new message from \(groupName)."
+            } else {
+                notificationInfo.alertBody = "You have a new message!"
+            }
             subscription.notificationInfo = notificationInfo
             return subscription
         }
@@ -568,8 +632,29 @@ public class CloudKitManager: NSObject {
         self.database.addOperation(addSubscriptionOperation)
     }
     
+    func fetchNotificationChangesWithCompletion(completion: (notifications: [CKNotification]?, serverChangeToken: CKServerChangeToken?, error: NSError?) -> Void) {
+        let fetchNotificationOps = CKFetchNotificationChangesOperation()
+        var notifications = [CKNotification]()
+        fetchNotificationOps.notificationChangedBlock = {
+            notification in
+            notifications.append(notification)
+        }
+        fetchNotificationOps.fetchNotificationChangesCompletionBlock = {
+            serverChangeToken, error in
+            if error != nil {
+                dispatch_async(dispatch_get_main_queue()) {
+                    completion(notifications: nil, serverChangeToken: nil, error: error)
+                }
+            }
+            dispatch_async(dispatch_get_main_queue()) {
+                completion(notifications: notifications, serverChangeToken: serverChangeToken, error: nil)
+            }
+        }
+        self.container.addOperation(fetchNotificationOps)
+    }
+    
     // Only for testing
-    public func deleteAllSubscriptionsWithCompletion(completion: (error: NSError?) -> Void) {
+    func deleteAllSubscriptionsWithCompletion(completion: (error: NSError?) -> Void) {
         let fetchSubscriptionOps = CKFetchSubscriptionsOperation.fetchAllSubscriptionsOperation()
         fetchSubscriptionOps.fetchSubscriptionCompletionBlock = {
             subscriptionDict, error in
@@ -579,11 +664,9 @@ public class CloudKitManager: NSObject {
                 }
                 return
             }
-            println("Dict: \(subscriptionDict)")
             var keys = [String]()
             for (key, value) in subscriptionDict {
                 keys.append(key as String)
-                println("key: \(key)")
             }
             let deleteAllOps = CKModifySubscriptionsOperation(subscriptionsToSave: [], subscriptionIDsToDelete: keys)
             deleteAllOps.modifySubscriptionsCompletionBlock = {
@@ -604,37 +687,8 @@ public class CloudKitManager: NSObject {
         self.database.addOperation(fetchSubscriptionOps)
     }
     
-    public func exitGroup(group: ChatGroup, user: User, completion: (error: NSError?) -> Void) {
+    func exitGroup(group: ChatGroup, user: User, completion: (error: NSError?) -> Void) {
         // TODO: exit group
     }
     
-    // Only for testing
-    public func testQuery(user: User, completion: (error: NSError?) -> Void) {
-        if !user.fetched() {
-            dispatch_async(dispatch_get_main_queue()) {
-                completion(error: CloudKitChatError.ModelNotFetchedError(user).error())
-            }
-            return
-        }
-        let query = CKQuery(recordType: MessageRecordType, predicate: NSPredicate(format: "recipientGroup == %@", CKReference(recordID: user.chatGroups![0].recordID, action: .None)))
-        let queryOps = CKQueryOperation(query: query)
-        queryOps.recordFetchedBlock = {
-            record in
-            let message = record.objectForKey(MessageBodyKey) as String
-            println("\(message)")
-        }
-        queryOps.queryCompletionBlock = {
-            _, error in
-            if error {
-                dispatch_async(dispatch_get_main_queue()) {
-                    completion(error: error)
-                }
-                return
-            }
-            dispatch_async(dispatch_get_main_queue()) {
-                completion(error: nil)
-            }
-        }
-        self.database.addOperation(queryOps)
-    }
 }

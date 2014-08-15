@@ -18,31 +18,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         application.registerForRemoteNotifications()
         application.registerUserNotificationSettings(UIUserNotificationSettings(forTypes: .Alert | .Badge | .Sound, categories: nil))
         
-//        CloudKitManager.sharedManager.fetchUserWithNameDiscovered(true) {
-//            user, error in
-//            if error != nil {
-//                println("fetch user error \(error)")
-//                return
-//            }
-//            println("user \(user)")
-//            CloudKitManager.sharedManager.fetchChatGroupsForUser(user!) {
-//                groups, error in
-//                if error != nil {
-//                    println("fetch user error \(error)")
-//                    return
-//                }
-//                println("groups \(groups)")
-//                (groups![0] as ChatGroup).owner!.fetchWithCompletion {
-//                    error in
-//                    println("group 0 \(groups![0])")
-//                }
-//            }
-//        }
         return true
     }
 
     func application(application: UIApplication!, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]!, fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)!) {
         println("Notification received: \(userInfo)")
+        
     }
     
     func application(application: UIApplication!, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData!) {

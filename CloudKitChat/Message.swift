@@ -23,7 +23,7 @@ public class Message: CloudKitQueriable, Comparable {
     public var timeSent: NSDate?
     public var timeSentString: NSString? {
         get {
-            if timeSent != nil {
+            if timeSent == nil {
                 return nil
             }
             return formatDate(timeSent!)
@@ -38,10 +38,10 @@ public class Message: CloudKitQueriable, Comparable {
     
     public var incoming: Bool {
         get {
-            if !self.fetched() || CloudKitManager.sharedManager.currentUser != nil {
+            if !self.fetched() || CurrentUser == nil {
                 return true
             }
-            return self.sender! == CloudKitManager.sharedManager.currentUser
+            return self.sender! != CurrentUser
         }
     }
     

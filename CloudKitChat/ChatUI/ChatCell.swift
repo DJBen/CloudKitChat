@@ -49,8 +49,8 @@ class ChatCell: UITableViewCell {
         }
 
         userNameLabel.text = chatGroup.owner!.name!
-        lastMessageTextLabel.text = chatGroup.lastMessage!.body!
-        lastMessageSentDateLabel.text = chatGroup.lastMessage!.timeSentString!
+        lastMessageTextLabel.text = chatGroup.lastMessage?.body ?? ""
+        lastMessageSentDateLabel.text = chatGroup.lastMessage?.timeSentString ?? "Unknown Time"
     }
     
     private func setupViews() {

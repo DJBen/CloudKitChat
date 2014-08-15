@@ -27,6 +27,8 @@
 		F4A262A419877A75003AD7EB /* MessageIncoming.aiff in Resources */ = {isa = PBXBuildFile; fileRef = F4A262A219877A75003AD7EB /* MessageIncoming.aiff */; };
 		F4A262A519877A75003AD7EB /* MessageOutgoing.aiff in Resources */ = {isa = PBXBuildFile; fileRef = F4A262A319877A75003AD7EB /* MessageOutgoing.aiff */; };
 		F4A262AA19877F90003AD7EB /* ChatGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A262A919877F90003AD7EB /* ChatGroupViewController.swift */; };
+		F4BE40AA1994358D005F068F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4BE40A91994358D005F068F /* Foundation.framework */; };
+		F4BE40AC199495F4005F068F /* OutboxUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4BE40AB199495F4005F068F /* OutboxUtil.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -115,6 +117,7 @@
 		F43C48C51980E194005CA1F5 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		F43C48C71980E19D005CA1F5 /* ChatGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatGroup.swift; sourceTree = "<group>"; };
 		F43C48C9198240E6005CA1F5 /* CloudKitQueriable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudKitQueriable.swift; path = Models/CloudKitQueriable.swift; sourceTree = "<group>"; };
+		F441C60A199D5FF40068B065 /* FIXME.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = FIXME.md; sourceTree = "<group>"; };
 		F46DE30F1988749B0051899A /* IntroViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
 		F4A2629A1986F1CB003AD7EB /* ChatCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ChatCell.swift; path = ChatUI/ChatCell.swift; sourceTree = "<group>"; };
 		F4A2629B1986F1CB003AD7EB /* ChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ChatViewController.swift; path = ChatUI/ChatViewController.swift; sourceTree = "<group>"; };
@@ -124,6 +127,8 @@
 		F4A262A319877A75003AD7EB /* MessageOutgoing.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; name = MessageOutgoing.aiff; path = Resources/MessageOutgoing.aiff; sourceTree = "<group>"; };
 		F4A262A919877F90003AD7EB /* ChatGroupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatGroupViewController.swift; sourceTree = "<group>"; };
 		F4A262AB19878234003AD7EB /* CREDITS.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = CREDITS.md; sourceTree = "<group>"; };
+		F4BE40A91994358D005F068F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		F4BE40AB199495F4005F068F /* OutboxUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutboxUtil.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,6 +136,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4BE40AA1994358D005F068F /* Foundation.framework in Frameworks */,
 				8F880A6AD30945369E7090C4 /* libPods.a in Frameworks */,
 				F43C48C41980D876005CA1F5 /* CloudKit.framework in Frameworks */,
 			);
@@ -149,6 +155,7 @@
 		8D3B0A558EE54344A75FD4CD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F4BE40A91994358D005F068F /* Foundation.framework */,
 				F43C48C31980D876005CA1F5 /* CloudKit.framework */,
 				1ED74E8C6E6640FA91D8A25D /* libPods.a */,
 			);
@@ -199,7 +206,9 @@
 				F43C48BC1980D62A005CA1F5 /* CloudKitChat-Bridging-Header.h */,
 				F43C48C01980D845005CA1F5 /* CloudKitManager.swift */,
 				F429D13E1991965F002C6C45 /* ErrorUtil.swift */,
+				F4BE40AB199495F4005F068F /* OutboxUtil.swift */,
 				F4A262AB19878234003AD7EB /* CREDITS.md */,
+				F441C60A199D5FF40068B065 /* FIXME.md */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -235,8 +244,8 @@
 		F4A262991986F1B7003AD7EB /* ChatUI */ = {
 			isa = PBXGroup;
 			children = (
-				F4A2629A1986F1CB003AD7EB /* ChatCell.swift */,
 				F4A2629B1986F1CB003AD7EB /* ChatViewController.swift */,
+				F4A2629A1986F1CB003AD7EB /* ChatCell.swift */,
 				F4A2629C1986F1CB003AD7EB /* MessageBubbleCell.swift */,
 				F4A2629D1986F1CB003AD7EB /* MessageSentDateCell.swift */,
 			);
@@ -415,6 +424,7 @@
 				F4371EFA1980D31600B79EC9 /* AppDelegate.swift in Sources */,
 				F4A2629F1986F1CB003AD7EB /* ChatViewController.swift in Sources */,
 				F429D13F1991965F002C6C45 /* ErrorUtil.swift in Sources */,
+				F4BE40AC199495F4005F068F /* OutboxUtil.swift in Sources */,
 				F43C48C81980E19D005CA1F5 /* ChatGroup.swift in Sources */,
 				F4A262A01986F1CB003AD7EB /* MessageBubbleCell.swift in Sources */,
 				F4A262AA19877F90003AD7EB /* ChatGroupViewController.swift in Sources */,
