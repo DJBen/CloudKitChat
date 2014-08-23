@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CloudKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,13 +18,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         application.registerForRemoteNotifications()
         application.registerUserNotificationSettings(UIUserNotificationSettings(forTypes: .Alert | .Badge | .Sound, categories: nil))
-        
+//        CloudKitManager.sharedManager.fetchUserWithNameDiscovered(false) {
+//            user, error in
+//            CloudKitManager.sharedManager.subscribeToChatGroupAndMessageChangesWithUser(user!) {
+//                error in
+//                CloudKitManager.sharedManager.deleteAllSubscriptionsWithCompletion {
+//                    error in
+//                    CloudKitManager.sharedManager.subscribeToChatGroupAndMessageChangesWithUser(user!) {
+//                        error in
+//                    }
+//                }
+//            }
+//            CloudKitManager.sharedManager.queryOneToManyRelation {
+//                error in
+//                
+//            }
+//        }
         return true
     }
 
     func application(application: UIApplication!, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]!, fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)!) {
         println("Notification received: \(userInfo)")
-        
+        let notification = CKNotification(fromRemoteNotificationDictionary: userInfo)
+        println("\(notification)")
+        CloudKitManager.sharedManager.fetchNotificationChangesWithCompletion {
+            messageRecordIDs , error in
+            if error != nil {
+                println("Fetch notification error \(error)")
+                completionHandler(.Failed)
+                return
+            }
+            if messageRecordIDs!.isEmpty {
+                completionHandler(.NoData)
+            } else {
+                completionHandler(.NewData)
+            }
+        }
     }
     
     func application(application: UIApplication!, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData!) {

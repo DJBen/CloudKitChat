@@ -9,7 +9,7 @@ class MessageSentDateCell: UITableViewCell {
         setupViews()
     }
     
-    required init(coder aDecoder: NSCoder!) {
+    required init(coder aDecoder: NSCoder) {
         sentDateLabel = UILabel(frame: CGRectZero)
         super.init(coder: aDecoder)
         setupViews()

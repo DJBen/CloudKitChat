@@ -45,7 +45,7 @@ class IntroViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpViewsAndConstraints()
-        fetchUserAndLogin()
+        fetchUserAndLoginWithNameDiscovered(false)
     }
 
     override func didReceiveMemoryWarning() {
@@ -161,7 +161,7 @@ class IntroViewController: UIViewController, UITextFieldDelegate {
     private func registerForKeyboardNotifications() {
         NSNotificationCenter.defaultCenter().addObserverForName(UIKeyboardDidShowNotification, object: nil, queue: NSOperationQueue.mainQueue()) {
             notification in
-            let keyboardSize = notification.userInfo[UIKeyboardFrameBeginUserInfoKey]!.CGRectValue().size
+            let keyboardSize = notification.userInfo![UIKeyboardFrameBeginUserInfoKey]!.CGRectValue().size
             if self.activeTextField != nil {
                 let textFieldBottomY = self.view.convertPoint(self.activeTextField!.frame.origin, fromView: self.scrollView).y + self.activeTextField!.bounds.size.height
                 let offset: CGFloat = textFieldBottomY + self.textFieldKeyboardDistance - (UIScreen.mainScreen().bounds.height - keyboardSize.height)
@@ -291,9 +291,9 @@ class IntroViewController: UIViewController, UITextFieldDelegate {
         return vibrancyView
     }
     
-    private func fetchUserAndLogin() {
-        SVProgressHUD.showWithMaskType(UInt(SVProgressHUDMaskTypeClear))
-        CloudKitManager.sharedManager.fetchUserWithNameDiscovered(false) {
+    private func fetchUserAndLoginWithNameDiscovered(discoverName: Bool) {
+        SVProgressHUD.showWithStatus("Logging in...", maskType: UInt(SVProgressHUDMaskTypeClear))
+        User.fetchUserWithNameDiscovered(discoverName) {
             user, error in
             SVProgressHUD.dismiss()
             if error != nil {
@@ -309,7 +309,45 @@ class IntroViewController: UIViewController, UITextFieldDelegate {
                 self.performSegueWithIdentifier(ChatGroupViewControllerSegueName, sender: self)
             } else {
                 // First time user login
-                // TODO: Need to display a retry button
+                println("First time user = \(user)")
+                let alert = UIAlertController(title: "Create account", message: "Please type your nickname which will be seen by other users. You can skip this step and use your iCloud name directly.", preferredStyle: .Alert)
+                alert.addTextFieldWithConfigurationHandler(nil)
+                alert.addAction(UIAlertAction(title: "Use Custom Name", style: .Default, handler: {
+                    alertAction in
+                    let customName = (alert.textFields[0] as UITextField).text
+                    SVProgressHUD.showWithStatus("Setting new nickname...", maskType: UInt(SVProgressHUDMaskTypeClear))
+                    User.setName(customName) {
+                        error in
+                        SVProgressHUD.dismiss()
+                        if error != nil {
+                            let setNameFailedAlert = UIAlertController(title: "Failed to set name", message: error!.userInfo![NSLocalizedRecoverySuggestionErrorKey]! as String, preferredStyle: .Alert)
+                            setNameFailedAlert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
+                            self.presentViewController(setNameFailedAlert, animated: true, completion: nil)
+                            return
+                        }
+                        self.nameTextField.text = customName
+                        self.fetchUserAndLoginWithNameDiscovered(false)
+                    }
+                }))
+                alert.addAction(UIAlertAction(title: "Use iCloud Name", style: .Default, handler: {
+                    alertAction in
+                    CloudKitManager.sharedManager.requestDiscoveryPermission {
+                        discoverable, error in
+                        if error != nil {
+                            let permissionRequestAlert = UIAlertController(title: "Failed to request permission", message: error!.userInfo![NSLocalizedRecoverySuggestionErrorKey]! as String, preferredStyle: .Alert)
+                            permissionRequestAlert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
+                            self.presentViewController(permissionRequestAlert, animated: true, completion: nil)
+                            return
+                        } else if !discoverable {
+                            let notDiscoverableAlert = UIAlertController(title: "Not discoverable", message: "CloudKitChat cannot get your iCloud name because you denied access", preferredStyle: .Alert)
+                            notDiscoverableAlert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
+                            self.presentViewController(notDiscoverableAlert, animated: true, completion: nil)
+                            return
+                        }
+                        self.fetchUserAndLoginWithNameDiscovered(true)
+                    }
+                }))
+                self.presentViewController(alert, animated: true, completion: nil)
             }
         }
     }

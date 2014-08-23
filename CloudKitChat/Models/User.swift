@@ -11,7 +11,7 @@ import CloudKit
 
 let UserRecordType: String = CKRecordTypeUserRecord
 let UserNameKey = "name"
-let UserChatGroupsKey = "groups"
+let UserChatGroupsKey = "groups" // derived
 
 // TODO: NSObject should be changed to RLMObject
 public class User: CloudKitQueriable {
@@ -52,11 +52,17 @@ public class User: CloudKitQueriable {
                 chatGroupReference -> ChatGroup in
                 return ChatGroup(recordID: chatGroupReference.recordID)
             }
+        } else {
+            self.chatGroups = [ChatGroup]()
         }
     }
     
     public override func fetched() -> Bool {
         return self.chatGroups != nil && self.name != nil
+    }
+    
+    public class func setName(name: String, completion: (error: NSError?) -> Void) {
+        CloudKitManager.sharedManager.setUserName(name, completion: completion)
     }
     
     public class func fetchUserWithNameDiscovered(discoverName: Bool, completion: FetchUserCompletionBlock) {

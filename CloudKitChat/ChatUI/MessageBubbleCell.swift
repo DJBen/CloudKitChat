@@ -14,7 +14,7 @@ class MessageBubbleCell: UITableViewCell {
         setupViews()
     }
     
-    required init(coder aDecoder: NSCoder!) {
+    required init(coder aDecoder: NSCoder) {
         bubbleImageView = UIImageView(image: bubbleImage.incoming, highlightedImage: bubbleImage.incomingHighlighed)
         messageLabel = UILabel(frame: CGRectZero)
         super.init(coder: aDecoder)

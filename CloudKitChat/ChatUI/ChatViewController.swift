@@ -18,7 +18,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     override var inputAccessoryView: UIView! {
     get {
-        if !toolBar {
+        if toolBar == nil {
             toolBar = UIToolbar(frame: CGRectMake(0, 0, 0, toolBarMinHeight-0.5))
 
             textView = InputTextView(frame: CGRectZero)
@@ -62,7 +62,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
         title = chatGroup.name!
     }
     
-    required init(coder aDecoder: NSCoder!) {
+    required init(coder aDecoder: NSCoder) {
         // This initilaizer should never be called
         self.chatGroup = ChatGroup(recordID: CKRecordID(recordName: ChatGroupRecordType))
         super.init(coder: aDecoder)
@@ -97,7 +97,6 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
         notificationCenter.addObserver(self, selector: "menuControllerWillHide:", name: UIMenuControllerWillHideMenuNotification, object: nil) // #CopyMessage
 
         generateTableViewDisplay()
-        tableViewScrollToBottomAnimated(false) // doesn't work
     }
 
     deinit {
@@ -158,7 +157,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
             let dateFormatter = NSDateFormatter()
             dateFormatter.dateStyle = .ShortStyle
             dateFormatter.timeStyle = .ShortStyle
-            cell.sentDateLabel.text = dateFormatter.stringFromDate(message.timeSent)
+            cell.sentDateLabel.text = dateFormatter.stringFromDate(message.timeSent!)
             return cell
         } else {
             let cellIdentifier = NSStringFromClass(MessageBubbleCell)
@@ -206,13 +205,13 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     func keyboardWillShow(notification: NSNotification) {
         let userInfo = notification.userInfo
-        let frameNew = (userInfo[UIKeyboardFrameEndUserInfoKey] as NSValue).CGRectValue()
+        let frameNew = (userInfo![UIKeyboardFrameEndUserInfoKey] as NSValue).CGRectValue()
         let insetNewBottom = tableView.convertRect(frameNew, fromView: nil).height
         let insetOld = tableView.contentInset
         let insetChange = insetNewBottom - insetOld.bottom
         let overflow = tableView.contentSize.height - (tableView.frame.height-insetOld.top-insetOld.bottom)
 
-        let duration = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as NSNumber).doubleValue
+        let duration = (userInfo![UIKeyboardAnimationDurationUserInfoKey] as NSNumber).doubleValue
         let animations: (() -> Void) = {
             if !(self.tableView.tracking || self.tableView.decelerating) {
                 // Move content with keyboard
@@ -227,7 +226,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
             }
         }
         if duration > 0 {
-            let options = UIViewAnimationOptions(UInt((userInfo[UIKeyboardAnimationCurveUserInfoKey] as NSNumber).integerValue << 16)) // http://stackoverflow.com/a/18873820/242933
+            let options = UIViewAnimationOptions(UInt((userInfo![UIKeyboardAnimationCurveUserInfoKey] as NSNumber).integerValue << 16)) // http://stackoverflow.com/a/18873820/242933
             UIView.animateWithDuration(duration, delay: 0, options: options, animations: animations, completion: nil)
         } else {
             animations()
@@ -236,7 +235,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     func keyboardDidShow(notification: NSNotification) {
         let userInfo = notification.userInfo
-        let frameNew = (userInfo[UIKeyboardFrameEndUserInfoKey] as NSValue).CGRectValue()
+        let frameNew = (userInfo![UIKeyboardFrameEndUserInfoKey] as NSValue).CGRectValue()
         let insetNewBottom = tableView.convertRect(frameNew, fromView: nil).height
 
         // Inset `tableView` with keyboard
@@ -251,7 +250,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
         // This method will be called again when dismissal is nearly complete
         // In that situation the animation duration is 0 and the begin and end frame are the same
         // At view loading, it will be called manually, so I need to eliminate that too
-        if (notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] as NSNumber).doubleValue != 0 && !CGRectEqualToRect((notification.userInfo[UIKeyboardFrameBeginUserInfoKey] as NSValue).CGRectValue(), (notification.userInfo[UIKeyboardFrameEndUserInfoKey] as NSValue).CGRectValue()) {
+        if (notification.userInfo![UIKeyboardAnimationDurationUserInfoKey] as NSNumber).doubleValue != 0 && !CGRectEqualToRect((notification.userInfo![UIKeyboardFrameBeginUserInfoKey] as NSValue).CGRectValue(), (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as NSValue).CGRectValue()) {
             tableViewScrollToBottomAnimated(true)
         }
     }
@@ -301,7 +300,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy/MM/dd"
         let messageDateString = dateFormatter.stringFromDate(pendingMessage.timeSent!)
-        let messageDate = dateFormatter.dateFromString(messageDateString)
+        let messageDate = dateFormatter.dateFromString(messageDateString)!
         
         var messagesDict = [NSDate: [Message]]()
         for message in chatGroup.messages! + Outboxes[chatGroup].pendingMessages {
@@ -311,7 +310,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
             let dateFormatter = NSDateFormatter()
             dateFormatter.dateFormat = "yyyy/MM/dd"
             let dateString = dateFormatter.stringFromDate(message.timeSent!)
-            let date = dateFormatter.dateFromString(dateString)
+            let date = dateFormatter.dateFromString(dateString)!
             if var messagesAtSameDay = messagesDict[date] {
                 messagesAtSameDay.append(message)
                 messagesDict[date] = messagesAtSameDay
@@ -368,7 +367,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
             let dateFormatter = NSDateFormatter()
             dateFormatter.dateFormat = "yyyy/MM/dd"
             let dateString = dateFormatter.stringFromDate(message.timeSent!)
-            let date = dateFormatter.dateFromString(dateString)
+            let date = dateFormatter.dateFromString(dateString)!
             if var messagesAtSameDay = messagesDict[date] {
                 messagesAtSameDay.append(message)
                 messagesDict[date] = messagesAtSameDay
@@ -424,7 +423,7 @@ func createMessageSoundOutgoing() -> SystemSoundID {
 // Only show "Copy" when editing `textView` #CopyMessage
 class InputTextView: UITextView {
     override func canPerformAction(action: Selector, withSender sender: AnyObject!) -> Bool {
-        if (delegate as ChatViewController).tableView.indexPathForSelectedRow() {
+        if (delegate as ChatViewController).tableView.indexPathForSelectedRow() != nil {
             return action == "messageCopyTextAction:"
         } else {
             return super.canPerformAction(action, withSender: sender)

@@ -12,7 +12,7 @@ import CloudKit
 let ChatGroupRecordType: String = "ChatGroup"
 let ChatGroupNameKey = "name"
 let ChatGroupPeopleKey = "people"
-let ChatGroupMessagesKey = "messages"
+let ChatGroupMessagesKey = "messages" // derived
 let ChatGroupOwnerKey = "owner"
 
 // TODO: Greet Realm
@@ -72,12 +72,16 @@ public class ChatGroup: CloudKitQueriable {
                 personReference -> User in
                 return User(recordID: personReference.recordID)
             }
+        } else {
+            self.people = [User]()
         }
         if let messageReferences = record.objectForKey(ChatGroupMessagesKey) as? [CKReference] {
             self.messages = messageReferences.map {
                 messageReference -> Message in
                 return Message(recordID: messageReference.recordID)
             }
+        } else {
+            self.messages = [Message]()
         }
     }
     

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6205" systemVersion="14A314h" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="x8J-uM-dLR">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6206.8" systemVersion="14A329f" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="x8J-uM-dLR">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6198"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7026.1"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
@@ -148,7 +148,13 @@
                             <outlet property="delegate" destination="2by-gA-fmX" id="JEf-IE-tml"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="CloudKitChat" id="P2f-U1-Wlg"/>
+                    <navigationItem key="navigationItem" title="CloudKitChat" id="P2f-U1-Wlg">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="OST-j9-8fJ">
+                            <connections>
+                                <action selector="addChatGroupTapped:" destination="2by-gA-fmX" id="wae-Z3-bsd"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="E8b-iX-bmY" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

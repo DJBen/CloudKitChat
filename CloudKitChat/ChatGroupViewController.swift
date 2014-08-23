@@ -36,18 +36,51 @@ class ChatGroupViewController: UITableViewController {
         refreshChatGroupsWithCompletion {
             error in
             if error == nil {
-                self.registerForMessageNotification()
+                // TODO:
+//                self.subscribeToMessageUpdateNotification()
             }
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewDidAppear(animated: Bool) {
         self.tableView.reloadData()
+        registerForNewMessageNotification()
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: CloudKitChatNewMessageReceivedNotification, object: CloudKitManager.sharedManager)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    @IBAction func addChatGroupTapped(sender: UIBarButtonItem) {
+        
+    }
+    
+    private func registerForNewMessageNotification() {
+        NSNotificationCenter.defaultCenter().addObserverForName(CloudKitChatNewMessageReceivedNotification, object: CloudKitManager.sharedManager, queue: NSOperationQueue.mainQueue()) {
+            notification in
+            if self.groupCount == 0 {
+                return
+            }
+            let newMessages = notification.userInfo![CloudKitChatNewMessagesKey]! as [Message]
+            for newMessage in newMessages {
+                for chatGroup in self.chats! {
+                    if !chatGroup.fetched() {
+                        return
+                    }
+                    if newMessage.recipientGroup! == chatGroup {
+                        chatGroup.messages!.append(newMessage)
+                        break
+                    }
+                }
+            }
+            CloudKitManager.sharedManager.markNewMessagesProcessed(newMessages)
+            self.tableView.reloadData()
+        }
     }
     
     func showDebugOptions(sender: UIGestureRecognizer!) {
@@ -109,16 +142,16 @@ class ChatGroupViewController: UITableViewController {
 
     override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
         let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(ChatCell), forIndexPath: indexPath) as ChatCell
-        if let chat = chats?[indexPath.row] {
-            cell.configureWithChatGroup(chat)
+        if let chatSession = chats?[indexPath.row] {
+            cell.configureWithChatGroup(chatSession)
         }
         return cell
     }
 
     override func tableView(tableView: UITableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {
         if chats != nil {
-            let chat = chats![indexPath.row]
-            let chatViewController = ChatViewController(chatGroup: chat)
+            let chatSession = chats![indexPath.row]
+            let chatViewController = ChatViewController(chatGroup: chatSession)
             navigationController.pushViewController(chatViewController, animated: true)
         }
     }
@@ -183,12 +216,12 @@ class ChatGroupViewController: UITableViewController {
         }
     }
     
-    private func registerForMessageNotification() {
+    private func subscribeToMessageUpdateNotification() {
         CurrentUser!.subscribeToChatGroupAndMessageChangesWithCompletion {
             error in
             if error != nil {
                 println("Error subscribing \(error)")
-                if !ErrorUtil.isDuplicateSubscription(error!) {
+                if !error!.isDuplicateSubscription() {
                     return
                 }
             }

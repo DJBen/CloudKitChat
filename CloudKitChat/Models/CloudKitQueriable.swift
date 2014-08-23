@@ -50,7 +50,7 @@ public class CloudKitQueriable: DebugPrintable, Hashable {
     }
     
     public func fetchWithOption(fetchOption: FetchModelOption, completion: (error: NSError?) -> Void) {
-        CloudKitManager().fetchAllPropertiesInModel(self, fetchOption: fetchOption, completion: completion)
+        CloudKitManager.sharedManager.fetchAllPropertiesInModel(self, fetchOption: fetchOption, completion: completion)
     }
     
     /**

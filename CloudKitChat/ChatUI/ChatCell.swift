@@ -20,7 +20,7 @@ class ChatCell: UITableViewCell {
         setupViews()
     }
     
-    required init(coder aDecoder: NSCoder!) {
+    required init(coder aDecoder: NSCoder) {
         userPictureImageView = UIImageView(frame: CGRectZero)
         userNameLabel = UILabel(frame: CGRectZero)
         lastMessageTextLabel = UILabel(frame: CGRectZero)
@@ -36,21 +36,21 @@ class ChatCell: UITableViewCell {
         }
         userPictureImageView.image = chatGroup.people![0].profilePicture
         
-        if !userPictureImageView.image {
-            if chatGroup.people![0].name!.initials.lengthOfBytesUsingEncoding(NSASCIIStringEncoding) == 0 {
+        if userPictureImageView.image == nil {
+            if chatGroup.name!.initials.lengthOfBytesUsingEncoding(NSASCIIStringEncoding) == 0 {
                 userPictureImageView.image = UIImage(named: "ProfilePicture")
                 userNameInitialsLabel.hidden = true
             } else {
-                userNameInitialsLabel.text = chatGroup.people![0].name!.initials
+                userNameInitialsLabel.text = chatGroup.name!.initials
                 userNameInitialsLabel.hidden = false
             }
         } else {
             userNameInitialsLabel.hidden = true
         }
 
-        userNameLabel.text = chatGroup.owner!.name!
-        lastMessageTextLabel.text = chatGroup.lastMessage?.body ?? ""
-        lastMessageSentDateLabel.text = chatGroup.lastMessage?.timeSentString ?? "Unknown Time"
+        userNameLabel.text = chatGroup.name!
+        lastMessageTextLabel.text = (chatGroup.lastMessage?.body ?? "")!
+        lastMessageSentDateLabel.text = (chatGroup.lastMessage?.timeSentString ?? "Unknown Time")!
     }
     
     private func setupViews() {
