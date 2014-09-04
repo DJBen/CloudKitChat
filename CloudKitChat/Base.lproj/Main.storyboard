@@ -3,6 +3,7 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7026.1"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints with attributes relative to the layout margin" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Navigation Controller-->
@@ -151,18 +152,148 @@
                     <navigationItem key="navigationItem" title="CloudKitChat" id="P2f-U1-Wlg">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="OST-j9-8fJ">
                             <connections>
-                                <action selector="addChatGroupTapped:" destination="2by-gA-fmX" id="wae-Z3-bsd"/>
+                                <segue destination="2lp-d0-K1A" kind="presentation" id="bRo-CX-QBY"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="E8b-iX-bmY" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1224" y="405"/>
+            <point key="canvasLocation" x="1183" y="405"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="qGO-CI-8Nj">
+            <objects>
+                <navigationController id="2lp-d0-K1A" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Agf-c1-uuN">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="YfZ-n9-7DB" kind="relationship" relationship="rootViewController" id="F3D-pe-dxc"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Kug-Cz-RZA" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1875" y="405"/>
+        </scene>
+        <!--Create Chat-->
+        <scene sceneID="qur-NG-hbn">
+            <objects>
+                <tableViewController id="YfZ-n9-7DB" customClass="FindFriendsViewController" customModule="CloudKitChat" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="djP-hi-3Oj">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="discoveryCell" textLabel="rwO-QV-jOg" style="IBUITableViewCellStyleDefault" id="Huz-kv-ewb">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Huz-kv-ewb" id="CtQ-W2-VHI">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="rwO-QV-jOg">
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="chatGroupNameCell" id="LF4-Dp-cyH" customClass="ChatGroupNameTableViewCell" customModule="CloudKitChat" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LF4-Dp-cyH" id="0HN-5A-Fpa">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter chat group name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="d8n-N6-QjQ">
+                                            <rect key="frame" x="16" y="-1" width="568" height="45"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="44" id="F6o-SF-yrW"/>
+                                            </constraints>
+                                            <nil key="textColor"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <textInputTraits key="textInputTraits"/>
+                                            <connections>
+                                                <outlet property="delegate" destination="YfZ-n9-7DB" id="6Wh-85-jRc"/>
+                                            </connections>
+                                        </textField>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="d8n-N6-QjQ" firstAttribute="leading" secondItem="0HN-5A-Fpa" secondAttribute="leadingMargin" constant="8" id="Za5-NJ-Jpp"/>
+                                        <constraint firstAttribute="centerY" secondItem="d8n-N6-QjQ" secondAttribute="centerY" id="huF-te-UO2"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="d8n-N6-QjQ" secondAttribute="trailing" constant="8" id="yr4-MS-4gQ"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="chatGroupNameTextField" destination="d8n-N6-QjQ" id="wYY-WL-uKc"/>
+                                </connections>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="friendCell" id="pAa-VM-10p" customClass="FriendTableViewCell" customModule="CloudKitChat" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="pAa-VM-10p" id="sD8-gX-PFt">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Unselected" translatesAutoresizingMaskIntoConstraints="NO" id="u3N-K8-dyd">
+                                            <rect key="frame" x="8" y="-1" width="44" height="45"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="44" id="XuX-Lx-oTT"/>
+                                                <constraint firstAttribute="height" constant="44" id="i0R-6K-PwV"/>
+                                            </constraints>
+                                        </imageView>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hve-6Z-RuD">
+                                            <rect key="frame" x="55" y="0.0" width="537" height="43"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="43" id="yOw-wb-TCO"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailingMargin" secondItem="Hve-6Z-RuD" secondAttribute="trailing" id="8Q4-EB-M54"/>
+                                        <constraint firstAttribute="centerY" secondItem="u3N-K8-dyd" secondAttribute="centerY" id="9Rt-NI-LAI"/>
+                                        <constraint firstItem="u3N-K8-dyd" firstAttribute="leading" secondItem="sD8-gX-PFt" secondAttribute="leadingMargin" id="G26-XJ-qTf"/>
+                                        <constraint firstItem="Hve-6Z-RuD" firstAttribute="leading" secondItem="u3N-K8-dyd" secondAttribute="trailing" constant="3" id="cjA-1z-xnc"/>
+                                        <constraint firstAttribute="centerY" secondItem="Hve-6Z-RuD" secondAttribute="centerY" id="hoI-Kg-bwP"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <inset key="separatorInset" minX="15" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                <connections>
+                                    <outlet property="nameLabel" destination="Hve-6Z-RuD" id="6j8-va-ft9"/>
+                                    <outlet property="selectedImageView" destination="u3N-K8-dyd" id="kKu-uY-LlM"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="YfZ-n9-7DB" id="qyh-ze-WJg"/>
+                            <outlet property="delegate" destination="YfZ-n9-7DB" id="kAy-PM-NbR"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Create Chat" id="5xr-k3-Cbi">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="2UG-xh-fha">
+                            <connections>
+                                <segue destination="QEU-Uu-Npv" kind="unwind" identifier="unwindToChatGroup" unwindAction="unwindToChatGroupViewController:" id="75B-mm-KY5"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="4Pr-yD-CJ9">
+                            <connections>
+                                <action selector="createChatGroup:" destination="YfZ-n9-7DB" id="ehT-jM-eAR"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Iyl-Gw-eYb" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="QEU-Uu-Npv" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="2578" y="405"/>
         </scene>
     </scenes>
     <resources>
         <image name="CloudKitChatIcon" width="267" height="213"/>
+        <image name="Unselected" width="44" height="44"/>
         <image name="iCloudGradient" width="1" height="1136"/>
     </resources>
 </document>

@@ -1,6 +1,6 @@
 # Bugs
 1. ~~Chat group view last message doesn't sync.~~
-2. Chat view table doesn't update correctly when new message is sent.
+2. ~~Chat view table doesn't update correctly when new message is sent~~.
 3. Does not respond to push notifications.
 
 # Pending improvements

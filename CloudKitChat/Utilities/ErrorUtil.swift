@@ -49,6 +49,10 @@ public enum CloudKitChatError {
 }
 
 public extension NSError {
+    func isPartialError() -> Bool {
+        return self.code == CKErrorCode.PartialFailure.toRaw()
+    }
+
     func isDuplicateSubscription() -> Bool {
         if self.code == CKErrorCode.PartialFailure.toRaw() {
             let partialErrors = (self.userInfo![CKPartialErrorsByItemIDKey]! as [String: NSError]).values.array

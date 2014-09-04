@@ -2,8 +2,8 @@ import UIKit
 
 class MessageSentDateCell: UITableViewCell {
     let sentDateLabel: UILabel
-
-    override init(style: UITableViewCellStyle, reuseIdentifier: String) {
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         sentDateLabel = UILabel(frame: CGRectZero)
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()

@@ -62,11 +62,11 @@ public class User: CloudKitQueriable {
     }
     
     public class func setName(name: String, completion: (error: NSError?) -> Void) {
-        CloudKitManager.sharedManager.setUserName(name, completion: completion)
+        CloudKitManager.sharedManager.setCurrentUserName(name, completion: completion)
     }
     
-    public class func fetchUserWithNameDiscovered(discoverName: Bool, completion: FetchUserCompletionBlock) {
-        CloudKitManager.sharedManager.fetchUserWithNameDiscovered(discoverName, completion: completion)
+    public class func fetchCurrentUserWithNameDiscovered(discoverName: Bool, completion: FetchUserCompletionBlock) {
+        CloudKitManager.sharedManager.fetchCurrentUserWithNameDiscovered(discoverName, completion: completion)
     }
     
     public func fetchChatGroupsWithCompletion(completion: (chatGroups: [ChatGroup]?, error: NSError?) -> Void) {

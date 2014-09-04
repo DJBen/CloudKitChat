@@ -18,20 +18,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         application.registerForRemoteNotifications()
         application.registerUserNotificationSettings(UIUserNotificationSettings(forTypes: .Alert | .Badge | .Sound, categories: nil))
-//        CloudKitManager.sharedManager.fetchUserWithNameDiscovered(false) {
+        
+//        User.fetchCurrentUserWithNameDiscovered(false) {
 //            user, error in
-//            CloudKitManager.sharedManager.subscribeToChatGroupAndMessageChangesWithUser(user!) {
-//                error in
-//                CloudKitManager.sharedManager.deleteAllSubscriptionsWithCompletion {
-//                    error in
-//                    CloudKitManager.sharedManager.subscribeToChatGroupAndMessageChangesWithUser(user!) {
-//                        error in
-//                    }
-//                }
-//            }
 //            CloudKitManager.sharedManager.queryOneToManyRelation {
 //                error in
-//                
 //            }
 //        }
         return true

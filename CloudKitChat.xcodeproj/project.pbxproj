@@ -14,6 +14,8 @@
 		F410292519A93481006B208D /* CloudKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F410292219A93481006B208D /* CloudKitManager.swift */; };
 		F410292619A93481006B208D /* ErrorUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = F410292319A93481006B208D /* ErrorUtil.swift */; };
 		F410292719A93481006B208D /* OutboxUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = F410292419A93481006B208D /* OutboxUtil.swift */; };
+		F410292A19A9B280006B208D /* FriendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F410292919A9B280006B208D /* FriendTableViewCell.swift */; };
+		F410292C19A9DA68006B208D /* ChatGroupNameTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F410292B19A9DA68006B208D /* ChatGroupNameTableViewCell.swift */; };
 		F4371EFA1980D31600B79EC9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4371EF91980D31600B79EC9 /* AppDelegate.swift */; };
 		F4371EFF1980D31600B79EC9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4371EFD1980D31600B79EC9 /* Main.storyboard */; };
 		F4371F011980D31600B79EC9 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4371F001980D31600B79EC9 /* Images.xcassets */; };
@@ -21,6 +23,7 @@
 		F43C48BB1980D594005CA1F5 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = F43C48BA1980D594005CA1F5 /* User.swift */; };
 		F43C48C41980D876005CA1F5 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F43C48C31980D876005CA1F5 /* CloudKit.framework */; };
 		F43C48CA198240E6005CA1F5 /* CloudKitQueriable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F43C48C9198240E6005CA1F5 /* CloudKitQueriable.swift */; };
+		F451FBD419AB002D0063AD28 /* AudioUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = F451FBD319AB002D0063AD28 /* AudioUtil.swift */; };
 		F46DE3101988749B0051899A /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46DE30F1988749B0051899A /* IntroViewController.swift */; };
 		F4A2629E1986F1CB003AD7EB /* ChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A2629A1986F1CB003AD7EB /* ChatCell.swift */; };
 		F4A2629F1986F1CB003AD7EB /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A2629B1986F1CB003AD7EB /* ChatViewController.swift */; };
@@ -107,6 +110,8 @@
 		F410292219A93481006B208D /* CloudKitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudKitManager.swift; path = Utilities/CloudKitManager.swift; sourceTree = "<group>"; };
 		F410292319A93481006B208D /* ErrorUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ErrorUtil.swift; path = Utilities/ErrorUtil.swift; sourceTree = "<group>"; };
 		F410292419A93481006B208D /* OutboxUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OutboxUtil.swift; path = Utilities/OutboxUtil.swift; sourceTree = "<group>"; };
+		F410292919A9B280006B208D /* FriendTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FriendTableViewCell.swift; path = Views/FriendTableViewCell.swift; sourceTree = "<group>"; };
+		F410292B19A9DA68006B208D /* ChatGroupNameTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ChatGroupNameTableViewCell.swift; path = Views/ChatGroupNameTableViewCell.swift; sourceTree = "<group>"; };
 		F4371EF41980D31600B79EC9 /* CloudKitChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CloudKitChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4371EF81980D31600B79EC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F4371EF91980D31600B79EC9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -121,6 +126,7 @@
 		F43C48C31980D876005CA1F5 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		F43C48C9198240E6005CA1F5 /* CloudKitQueriable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudKitQueriable.swift; path = Models/CloudKitQueriable.swift; sourceTree = "<group>"; };
 		F441C60A199D5FF40068B065 /* FIXME.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = FIXME.md; sourceTree = "<group>"; };
+		F451FBD319AB002D0063AD28 /* AudioUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AudioUtil.swift; path = Utilities/AudioUtil.swift; sourceTree = "<group>"; };
 		F46DE30F1988749B0051899A /* IntroViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
 		F4A2629A1986F1CB003AD7EB /* ChatCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ChatCell.swift; path = ChatUI/ChatCell.swift; sourceTree = "<group>"; };
 		F4A2629B1986F1CB003AD7EB /* ChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ChatViewController.swift; path = ChatUI/ChatViewController.swift; sourceTree = "<group>"; };
@@ -164,6 +170,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		F410292819A9B253006B208D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F410292919A9B280006B208D /* FriendTableViewCell.swift */,
+				F410292B19A9DA68006B208D /* ChatGroupNameTableViewCell.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
 		F4371EEB1980D31600B79EC9 = {
 			isa = PBXGroup;
 			children = (
@@ -195,6 +210,7 @@
 				F4371EFD1980D31600B79EC9 /* Main.storyboard */,
 				F4371F001980D31600B79EC9 /* Images.xcassets */,
 				F43C48B71980D52D005CA1F5 /* Models */,
+				F410292819A9B253006B208D /* Views */,
 				F4A262991986F1B7003AD7EB /* ChatUI */,
 				F4A262A619877BB1003AD7EB /* Resources */,
 				F4371EF71980D31600B79EC9 /* Supporting Files */,
@@ -210,6 +226,7 @@
 				F410292219A93481006B208D /* CloudKitManager.swift */,
 				F410292319A93481006B208D /* ErrorUtil.swift */,
 				F410292419A93481006B208D /* OutboxUtil.swift */,
+				F451FBD319AB002D0063AD28 /* AudioUtil.swift */,
 				F4A262AB19878234003AD7EB /* CREDITS.md */,
 				F441C60A199D5FF40068B065 /* FIXME.md */,
 			);
@@ -417,6 +434,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F451FBD419AB002D0063AD28 /* AudioUtil.swift in Sources */,
 				F43C48BB1980D594005CA1F5 /* User.swift in Sources */,
 				F4A262A11986F1CB003AD7EB /* MessageSentDateCell.swift in Sources */,
 				F4A2629E1986F1CB003AD7EB /* ChatCell.swift in Sources */,
@@ -432,6 +450,8 @@
 				F410292619A93481006B208D /* ErrorUtil.swift in Sources */,
 				F410292719A93481006B208D /* OutboxUtil.swift in Sources */,
 				F410292519A93481006B208D /* CloudKitManager.swift in Sources */,
+				F410292A19A9B280006B208D /* FriendTableViewCell.swift in Sources */,
+				F410292C19A9DA68006B208D /* ChatGroupNameTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

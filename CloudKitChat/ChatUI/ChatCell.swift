@@ -10,7 +10,7 @@ class ChatCell: UITableViewCell {
     let lastMessageSentDateLabel: UILabel
     let userNameInitialsLabel: UILabel
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String) {
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         userPictureImageView = UIImageView(frame: CGRectZero)
         userNameLabel = UILabel(frame: CGRectZero)
         lastMessageTextLabel = UILabel(frame: CGRectZero)
@@ -37,20 +37,20 @@ class ChatCell: UITableViewCell {
         userPictureImageView.image = chatGroup.people![0].profilePicture
         
         if userPictureImageView.image == nil {
-            if chatGroup.name!.initials.lengthOfBytesUsingEncoding(NSASCIIStringEncoding) == 0 {
+            if chatGroup.displayName!.initials.lengthOfBytesUsingEncoding(NSASCIIStringEncoding) == 0 {
                 userPictureImageView.image = UIImage(named: "ProfilePicture")
                 userNameInitialsLabel.hidden = true
             } else {
-                userNameInitialsLabel.text = chatGroup.name!.initials
+                userNameInitialsLabel.text = chatGroup.displayName!.initials
                 userNameInitialsLabel.hidden = false
             }
         } else {
             userNameInitialsLabel.hidden = true
         }
 
-        userNameLabel.text = chatGroup.name!
+        userNameLabel.text = chatGroup.displayName!.isEmpty ? "(Empty)" : chatGroup.displayName!
         lastMessageTextLabel.text = (chatGroup.lastMessage?.body ?? "")!
-        lastMessageSentDateLabel.text = (chatGroup.lastMessage?.timeSentString ?? "Unknown Time")!
+        lastMessageSentDateLabel.text = (chatGroup.lastMessage?.timeSentString ?? "")!
     }
     
     private func setupViews() {
@@ -112,6 +112,9 @@ extension String {
         get {
             return "".join(self.componentsSeparatedByString(" ").map {
                 (component: String) -> String in
+                if component.isEmpty {
+                    return ""
+                }
                 return component.substringToIndex(advance(component.startIndex, 1))
             })
         }

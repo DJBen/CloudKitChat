@@ -35,9 +35,9 @@ class IntroViewController: UIViewController, UITextFieldDelegate {
     let textFieldKeyboardDistance: CGFloat = 20
     
     var buttonContainers: [UIVisualEffectView!] {
-    get {
-        return [lookUpContactsButtonContainer, goToChatsButtonContainer, discoverUserNameButtonContainer, proceedButtonContainer, goBackButtonContainer]
-    }
+        get {
+            return [lookUpContactsButtonContainer, goToChatsButtonContainer, discoverUserNameButtonContainer, proceedButtonContainer, goBackButtonContainer]
+        }
     }
     
     // MARK: Life Cycle
@@ -64,7 +64,7 @@ class IntroViewController: UIViewController, UITextFieldDelegate {
     // MARK: Navigation
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue!, sender: AnyObject!) {
+    override func prepareForSegue(segue: UIStoryboardSegue?, sender: AnyObject!) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
     }
@@ -75,7 +75,7 @@ class IntroViewController: UIViewController, UITextFieldDelegate {
             discoverable, error in
             if error != nil {
                 println("Discover error: \(error)")
-                let alert = UIAlertController(title: "Unable to discover", message: "Please try again.", preferredStyle: .Alert)
+                let alert = UIAlertController(title: "Unable to discover", message: error!.localizedDescription, preferredStyle: .Alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
                 self.presentViewController(alert, animated: true, completion: nil)
                 return
@@ -99,7 +99,7 @@ class IntroViewController: UIViewController, UITextFieldDelegate {
         CloudKitManager.sharedManager.requestDiscoveryPermission {
             discoverable, error in
             if error != nil {
-                let alert = UIAlertController(title: "Unable to contact iCloud", message: "Please try again.", preferredStyle: .Alert)
+                let alert = UIAlertController(title: "Unable to contact iCloud", message: error!.localizedDescription, preferredStyle: .Alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
                 self.presentViewController(alert, animated: true, completion: nil)
                 SVProgressHUD.dismiss()
@@ -112,12 +112,12 @@ class IntroViewController: UIViewController, UITextFieldDelegate {
                 SVProgressHUD.dismiss()
                 return
             }
-            User.fetchUserWithNameDiscovered(true) {
-                user, error in
+            User.fetchCurrentUserWithNameDiscovered(true) {
+                _, error in
                 SVProgressHUD.dismiss()
-                println("\(user), \(error)")
-                if user != nil && user!.fetched() {
-                    self.nameTextField.text = user!.name
+                println("\(CurrentUser!), \(error)")
+                if CurrentUser != nil && CurrentUser!.fetched() {
+                    self.nameTextField.text = CurrentUser!.name
                 }
                 if error != nil {
                     
@@ -293,34 +293,34 @@ class IntroViewController: UIViewController, UITextFieldDelegate {
     
     private func fetchUserAndLoginWithNameDiscovered(discoverName: Bool) {
         SVProgressHUD.showWithStatus("Logging in...", maskType: UInt(SVProgressHUDMaskTypeClear))
-        User.fetchUserWithNameDiscovered(discoverName) {
-            user, error in
+        User.fetchCurrentUserWithNameDiscovered(discoverName) {
+            _, error in
             SVProgressHUD.dismiss()
             if error != nil {
                 println("Fetch user error: \(error)")
-                let alert = UIAlertController(title: "Unable to log you in", message: "Please try again.", preferredStyle: .Alert)
+                let alert = UIAlertController(title: "Unable to log you in", message: error!.localizedDescription, preferredStyle: .Alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
                 self.presentViewController(alert, animated: true, completion: nil)
                 return
             }
-            if user!.fetched() {
+            if CurrentUser != nil && CurrentUser!.fetched() {
                 // User has logged in before
-                self.nameTextField.text = user!.name!
+                self.nameTextField.text = CurrentUser!.name!
                 self.performSegueWithIdentifier(ChatGroupViewControllerSegueName, sender: self)
             } else {
                 // First time user login
-                println("First time user = \(user)")
+                println("First time user = \(CurrentUser)")
                 let alert = UIAlertController(title: "Create account", message: "Please type your nickname which will be seen by other users. You can skip this step and use your iCloud name directly.", preferredStyle: .Alert)
                 alert.addTextFieldWithConfigurationHandler(nil)
                 alert.addAction(UIAlertAction(title: "Use Custom Name", style: .Default, handler: {
                     alertAction in
-                    let customName = (alert.textFields[0] as UITextField).text
+                    let customName = (alert.textFields![0] as UITextField).text
                     SVProgressHUD.showWithStatus("Setting new nickname...", maskType: UInt(SVProgressHUDMaskTypeClear))
                     User.setName(customName) {
                         error in
                         SVProgressHUD.dismiss()
                         if error != nil {
-                            let setNameFailedAlert = UIAlertController(title: "Failed to set name", message: error!.userInfo![NSLocalizedRecoverySuggestionErrorKey]! as String, preferredStyle: .Alert)
+                            let setNameFailedAlert = UIAlertController(title: "Failed to set name", message: error!.localizedDescription, preferredStyle: .Alert)
                             setNameFailedAlert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
                             self.presentViewController(setNameFailedAlert, animated: true, completion: nil)
                             return
@@ -334,7 +334,7 @@ class IntroViewController: UIViewController, UITextFieldDelegate {
                     CloudKitManager.sharedManager.requestDiscoveryPermission {
                         discoverable, error in
                         if error != nil {
-                            let permissionRequestAlert = UIAlertController(title: "Failed to request permission", message: error!.userInfo![NSLocalizedRecoverySuggestionErrorKey]! as String, preferredStyle: .Alert)
+                            let permissionRequestAlert = UIAlertController(title: "Failed to request permission", message: error!.localizedDescription, preferredStyle: .Alert)
                             permissionRequestAlert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
                             self.presentViewController(permissionRequestAlert, animated: true, completion: nil)
                             return

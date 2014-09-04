@@ -52,18 +52,7 @@ public class CloudKitQueriable: DebugPrintable, Hashable {
     public func fetchWithOption(fetchOption: FetchModelOption, completion: (error: NSError?) -> Void) {
         CloudKitManager.sharedManager.fetchAllPropertiesInModel(self, fetchOption: fetchOption, completion: completion)
     }
-    
-    /**
-     * Get the fetchable properties and their corresponding keys.
-     * @return The dictionary with property names as keys and the properties as values
-     */
-    // TODO: Finalize or discard
-    public func fetchableProperties() -> [CloudKitQueriable: String]? {
-        if !fetched() {
-            return nil
-        }
-        return [:]
-    }
+
 }
 
 public func == <T: CloudKitQueriable, U: CloudKitQueriable>(lhs: T , rhs: U) -> Bool {

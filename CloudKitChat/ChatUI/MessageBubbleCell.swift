@@ -7,7 +7,7 @@ class MessageBubbleCell: UITableViewCell {
     let bubbleImageView: UIImageView
     let messageLabel: UILabel
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String) {
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         bubbleImageView = UIImageView(image: bubbleImage.incoming, highlightedImage: bubbleImage.incomingHighlighed)
         messageLabel = UILabel(frame: CGRectZero)
         super.init(style: .Default, reuseIdentifier: reuseIdentifier)

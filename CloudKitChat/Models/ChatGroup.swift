@@ -18,6 +18,30 @@ let ChatGroupOwnerKey = "owner"
 // TODO: Greet Realm
 public class ChatGroup: CloudKitQueriable {
     public var name: String?
+    public var displayName: String? {
+        get {
+            if self.fetched() {
+                if self.people!.count != 2 {
+                    return self.name!
+                } else {
+                    if CurrentUser == nil {
+                        return self.name ?? nil
+                    }
+                    let otherPerson = self.people!.filter {
+                        user -> Bool in
+                        return user != CurrentUser!
+                    }
+                    if otherPerson.count == 1 {
+                        return otherPerson[0].name ?? self.name ?? nil
+                    } else {
+                        return self.name ?? nil
+                    }
+                }
+            } else {
+                return nil
+            }
+        }
+    }
     public var owner: User?
     public var people: [User]?
     public var messages: [Message]?
