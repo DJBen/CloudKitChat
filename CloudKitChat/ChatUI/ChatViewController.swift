@@ -57,7 +57,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
     init(chatGroup: ChatGroup) {
         self.chatGroup = chatGroup
         super.init(nibName: nil, bundle: nil)
-        title = chatGroup.name!
+        title = chatGroup.displayName
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -352,6 +352,9 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     private func tableViewScrollToBottomAnimated(animated: Bool) {
+        if tableView.numberOfSections() == 0 {
+            return
+        }
         let numberOfRows = tableView.numberOfRowsInSection(tableView.numberOfSections() - 1)
         if numberOfRows > 0 {
             tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: numberOfRows - 1, inSection: tableView.numberOfSections() - 1), atScrollPosition: .Bottom, animated: animated)
@@ -401,7 +404,7 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
             let menuController = UIMenuController.sharedMenuController()
             let bubbleImageView = gestureRecognizer.view!
             menuController.setTargetRect(bubbleImageView.frame, inView: bubbleImageView.superview!)
-            menuController.menuItems = [UIMenuItem(title: "Copy", action: "messageCopyTextAction:")]
+            menuController.menuItems = [UIMenuItem(title: "Copy", action: "messageCopyTextAction:")!]
             menuController.setMenuVisible(true, animated: true)
         }
     }

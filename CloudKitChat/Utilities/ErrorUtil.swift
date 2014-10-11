@@ -50,14 +50,14 @@ public enum CloudKitChatError {
 
 public extension NSError {
     func isPartialError() -> Bool {
-        return self.code == CKErrorCode.PartialFailure.toRaw()
+        return self.code == CKErrorCode.PartialFailure.rawValue
     }
 
     func isDuplicateSubscription() -> Bool {
-        if self.code == CKErrorCode.PartialFailure.toRaw() {
+        if self.code == CKErrorCode.PartialFailure.rawValue {
             let partialErrors = (self.userInfo![CKPartialErrorsByItemIDKey]! as [String: NSError]).values.array
             for partialError in partialErrors {
-                if partialError.code != CKErrorCode.ServerRejectedRequest.toRaw() {
+                if partialError.code != CKErrorCode.ServerRejectedRequest.rawValue {
                     return false
                 }
             }
@@ -66,7 +66,7 @@ public extension NSError {
     }
     
     func isFirstTimeRecordTypeNotCreated() -> Bool {
-        if self.code == CKErrorCode.UnknownItem.toRaw() {
+        if self.code == CKErrorCode.UnknownItem.rawValue {
             return true
         }
         return false

@@ -6,14 +6,15 @@
       "scale" : "2x"
     },
     {
-      "idiom" : "iphone",
       "size" : "40x40",
+      "idiom" : "iphone",
+      "filename" : "CloudKitChat-40@2x.png",
       "scale" : "2x"
     },
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "Icon-Phone@2x.png",
+      "filename" : "CloudKitChat-60@2x.png",
       "scale" : "2x"
     }
   ],

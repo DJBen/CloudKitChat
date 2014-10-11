@@ -174,7 +174,7 @@ class ChatGroupViewController: UITableViewController {
                 completionNotifier.title = String(format: "\(subscriptions!.count) Subscription%@", subscriptions!.count != 1 ? "s" : "")
                 completionNotifier.message = subscriptions!.map {
                     subscription -> String in
-                    return "{\(subscription.subscriptionID):  \(subscription.recordType), \(subscription.predicate), sOptions=\(subscription.subscriptionOptions.toRaw()), sType=\(subscription.subscriptionType.toRaw())}"
+                    return "{\(subscription.subscriptionID):  \(subscription.recordType), \(subscription.predicate), sOptions=\(subscription.subscriptionOptions.rawValue), sType=\(subscription.subscriptionType.rawValue)}"
                 }.reduce(String()) {
                     description1, description2 -> String in
                     if description1.isEmpty {

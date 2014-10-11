@@ -10,7 +10,7 @@ class ChatCell: UITableViewCell {
     let lastMessageSentDateLabel: UILabel
     let userNameInitialsLabel: UILabel
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init?(style: UITableViewCellStyle, reuseIdentifier: String?) {
         userPictureImageView = UIImageView(frame: CGRectZero)
         userNameLabel = UILabel(frame: CGRectZero)
         lastMessageTextLabel = UILabel(frame: CGRectZero)

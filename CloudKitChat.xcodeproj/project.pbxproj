@@ -17,14 +17,14 @@
 		F410292A19A9B280006B208D /* FriendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F410292919A9B280006B208D /* FriendTableViewCell.swift */; };
 		F410292C19A9DA68006B208D /* ChatGroupNameTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F410292B19A9DA68006B208D /* ChatGroupNameTableViewCell.swift */; };
 		F4371EFA1980D31600B79EC9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4371EF91980D31600B79EC9 /* AppDelegate.swift */; };
-		F4371EFF1980D31600B79EC9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4371EFD1980D31600B79EC9 /* Main.storyboard */; };
-		F4371F011980D31600B79EC9 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4371F001980D31600B79EC9 /* Images.xcassets */; };
 		F4371F0D1980D31600B79EC9 /* CloudKitChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4371F0C1980D31600B79EC9 /* CloudKitChatTests.swift */; };
 		F43C48BB1980D594005CA1F5 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = F43C48BA1980D594005CA1F5 /* User.swift */; };
 		F43C48C41980D876005CA1F5 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F43C48C31980D876005CA1F5 /* CloudKit.framework */; };
 		F43C48CA198240E6005CA1F5 /* CloudKitQueriable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F43C48C9198240E6005CA1F5 /* CloudKitQueriable.swift */; };
 		F451FBD419AB002D0063AD28 /* AudioUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = F451FBD319AB002D0063AD28 /* AudioUtil.swift */; };
 		F46DE3101988749B0051899A /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46DE30F1988749B0051899A /* IntroViewController.swift */; };
+		F489D81419B90B6800DD6956 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4371EFD1980D31600B79EC9 /* Main.storyboard */; };
+		F489D81519B90B8600DD6956 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4371F001980D31600B79EC9 /* Images.xcassets */; };
 		F4A2629E1986F1CB003AD7EB /* ChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A2629A1986F1CB003AD7EB /* ChatCell.swift */; };
 		F4A2629F1986F1CB003AD7EB /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A2629B1986F1CB003AD7EB /* ChatViewController.swift */; };
 		F4A262A01986F1CB003AD7EB /* MessageBubbleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A2629C1986F1CB003AD7EB /* MessageBubbleCell.swift */; };
@@ -380,9 +380,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F4371EFF1980D31600B79EC9 /* Main.storyboard in Resources */,
+				F489D81519B90B8600DD6956 /* Images.xcassets in Resources */,
+				F489D81419B90B6800DD6956 /* Main.storyboard in Resources */,
 				F4A262A519877A75003AD7EB /* MessageOutgoing.aiff in Resources */,
-				F4371F011980D31600B79EC9 /* Images.xcassets in Resources */,
 				F4A262A419877A75003AD7EB /* MessageIncoming.aiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

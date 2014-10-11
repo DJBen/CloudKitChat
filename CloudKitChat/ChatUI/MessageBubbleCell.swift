@@ -7,7 +7,7 @@ class MessageBubbleCell: UITableViewCell {
     let bubbleImageView: UIImageView
     let messageLabel: UILabel
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init?(style: UITableViewCellStyle, reuseIdentifier: String?) {
         bubbleImageView = UIImageView(image: bubbleImage.incoming, highlightedImage: bubbleImage.incomingHighlighed)
         messageLabel = UILabel(frame: CGRectZero)
         super.init(style: .Default, reuseIdentifier: reuseIdentifier)
@@ -91,8 +91,8 @@ class MessageBubbleCell: UITableViewCell {
 let bubbleImage = bubbleImageMake()
 
 func bubbleImageMake() -> (incoming: UIImage, incomingHighlighed: UIImage, outgoing: UIImage, outgoingHighlighed: UIImage) {
-    let maskOutgoing = UIImage(named: "MessageBubble")
-    let maskIncoming = UIImage(CGImage: maskOutgoing.CGImage, scale: 2, orientation: .UpMirrored)
+    let maskOutgoing = UIImage(named: "MessageBubble")!
+    let maskIncoming = UIImage(CGImage: maskOutgoing.CGImage!, scale: 2, orientation: .UpMirrored)!
 
     let capInsetsIncoming = UIEdgeInsets(top: 17, left: 26.5, bottom: 17.5, right: 21)
     let capInsetsOutgoing = UIEdgeInsets(top: 17, left: 21, bottom: 17.5, right: 26.5)

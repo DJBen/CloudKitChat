@@ -159,7 +159,7 @@ public class CloudKitManager: NSObject {
         self.container.fetchUserRecordIDWithCompletionHandler {
             (userRecordID: CKRecordID!, error: NSError!) in
             if error != nil {
-                if error.code == CKErrorCode.NotAuthenticated.toRaw() {
+                if error.code == CKErrorCode.NotAuthenticated.rawValue {
                     // iCloud account not exist, or restricted
                 }
                 dispatch_async(dispatch_get_main_queue()) {
@@ -201,7 +201,7 @@ public class CloudKitManager: NSObject {
         self.container.fetchUserRecordIDWithCompletionHandler {
             (userRecordID: CKRecordID!, error: NSError!) in
             if error != nil {
-                if error.code == CKErrorCode.NotAuthenticated.toRaw() {
+                if error.code == CKErrorCode.NotAuthenticated.rawValue {
                     // iCloud account not exist, or restricted
                 }
                 dispatch_async(dispatch_get_main_queue()) {
@@ -414,7 +414,7 @@ public class CloudKitManager: NSObject {
         }
         fetchListOperation.fetchRecordsCompletionBlock = {
             _, error in
-            if error != nil && error.code != CKErrorCode.PartialFailure.toRaw() {
+            if error != nil && error.code != CKErrorCode.PartialFailure.rawValue {
                 dispatch_async(dispatch_get_main_queue()) {
                     completion(fetchedList: nil, error: error)
                 }
@@ -838,7 +838,7 @@ public class CloudKitManager: NSObject {
             }
             self.fetchChangesWithCompletion {
                 fetchedMessages, error in
-                if error != nil && error!.code != CKErrorCode.PartialFailure.toRaw() {
+                if error != nil && error!.code != CKErrorCode.PartialFailure.rawValue {
                     dispatch_async(dispatch_get_main_queue()) {
                         completion(messageRecordIDs: nil, error: error)
                     }
@@ -861,7 +861,7 @@ public class CloudKitManager: NSObject {
     private func fetchChangesWithCompletion(completion: (fetchedNewMessages: [Message]?, error: NSError?) -> Void) {
         fetchModelCollection(unfetchedMessages) {
             changedModels, error in
-            if error != nil && error!.code != CKErrorCode.PartialFailure.toRaw() {
+            if error != nil && error!.code != CKErrorCode.PartialFailure.rawValue {
                 dispatch_async(dispatch_get_main_queue()) {
                     completion(fetchedNewMessages: nil, error: error)
                 }
@@ -958,7 +958,7 @@ public class CloudKitManager: NSObject {
             })
             markNotificationOps.markNotificationsReadCompletionBlock = {
                 notificationIDsMarked, error in
-                if error != nil && error.code != CKErrorCode.PartialFailure.toRaw() {
+                if error != nil && error.code != CKErrorCode.PartialFailure.rawValue {
                     dispatch_async(dispatch_get_main_queue()) {
                         completion(error: error)
                     }
